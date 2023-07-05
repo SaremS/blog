@@ -224,11 +224,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This allows us to simplify the Hessian matrix to be zero everywhere, except for its diagonal which is the second-order derivative of the log-likelihood function with respect to the GP:</p>
 <p><span class="math display">\[H_{ii}=\frac{\partial^2}{\partial f_i^2}\log p(y_i|f_i)\]</span></p>
 <p>The right-hand side can be derived by differentiating the standard Gaussian log-likelihood twice with respect to the variance while accounting for our exponential transform:</p>
-<p><span class="math display">\[\frac{\partial^2}{\partial f_i^2}\log p(y_i|f_i)\]</span></p>
-<p><span class="math display">\[=\frac{\partial}{\partial f_i} \frac{\partial}{\partial f_i}\log p(y_i|f_i)\]</span></p>
-<p><span class="math display">\[=\frac{\partial}{\partial f_i} \frac{\partial}{\partial f_i}\left( -0.5 \log (2\pi)-0.5f_i - 0.5\frac{y_i^2}{exp(f_i)}\right)\]</span></p>
-<p><span class="math display">\[=\frac{\partial}{\partial f_i} \left(-0.5 + 0.5\frac{y_i^2}{exp(f_i)}\right)\]</span></p>
-<p><span class="math display">\[=- 0.5\frac{y_i^2}{exp(f_i)}\]</span></p>
+<p><span class="math display">\[\begin{gathered}
+\frac{\partial^2}{\partial f_i^2}\log p(y_i|f_i)\\
+=\frac{\partial}{\partial f_i} \frac{\partial}{\partial f_i}\log p(y_i|f_i)\\
+=\frac{\partial}{\partial f_i} \frac{\partial}{\partial f_i}\left( -0.5 \log (2\pi)-0.5f_i - 0.5\frac{y_i^2}{exp(f_i)}\right)\\
+=\frac{\partial}{\partial f_i} \left(-0.5 + 0.5\frac{y_i^2}{exp(f_i)}\right)\\
+=- 0.5\frac{y_i^2}{exp(f_i)}
+\end{gathered}
+\]</span></p>
 <p>Which yields</p>
 <p><span class="math display">\[H_{ii}=- 0.5\frac{y_i^2}{exp(f_i)}\]</span></p>
 <p>and</p>
@@ -249,7 +252,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The data is a simple, 1D toy-example with 200 observations and generating distributions</p>
 <p><span class="math display">\[y\sim \mathcal{N}(0,sin^2(2 *X)),\quad X\sim\mathcal{U}(-3,3)\]</span></p>
 <p>i.e.&nbsp;the input variable is sampled uniformly between -3 and 3 and the target is drawn from a zero-mean Gaussian with periodic variance:</p>
-<div class="cell" data-execution_count="2">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Flux</span>, <span class="bu">Zygote</span>, <span class="bu">Distributions</span>, <span class="bu">DistributionsAD</span>, <span class="bu">FastGaussQuadrature</span>, <span class="bu">Plots</span>, <span class="bu">StatsPlots</span>, <span class="bu">KernelFunctions</span>, <span class="bu">LinearAlgebra</span>, <span class="bu">Random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="29">
