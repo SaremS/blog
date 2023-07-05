@@ -2,6 +2,9 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/arma-forecasting-for-non-gaussian-time-series-data-using-copulas.html",
+      "/posts/bayesian-machine-learning-and-julia-are-a-match-made-in-heaven.html",
+      "/posts/when-is-bayesian-machine-learning-actually-useful.html",
       "/posts/a-gaussian-process-model-for-heteroscedasticity.html"
     ]
   }

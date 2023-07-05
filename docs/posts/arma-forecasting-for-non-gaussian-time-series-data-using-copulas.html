@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sarem">
+<meta name="dcterms.date" content="2022-06-17">
+
+<title>blog - ARMA forecasting for non-Gaussian time-series data using Copulas</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">ARMA forecasting for non-Gaussian time-series data using Copulas</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Time Series</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sarem </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 17, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#what-are-copulas-and-how-can-we-use-them-with-arma" id="toc-what-are-copulas-and-how-can-we-use-them-with-arma" class="nav-link" data-scroll-target="#what-are-copulas-and-how-can-we-use-them-with-arma">What are Copulas and how can we use them with ARMA?</a></li>
+  <li><a href="#arma-with-non-normal-data-via-copulas" id="toc-arma-with-non-normal-data-via-copulas" class="nav-link" data-scroll-target="#arma-with-non-normal-data-via-copulas">ARMA with non-normal data via Copulas</a></li>
+  <li><a href="#parameter-estimation-with-maximum-likelihood" id="toc-parameter-estimation-with-maximum-likelihood" class="nav-link" data-scroll-target="#parameter-estimation-with-maximum-likelihood">Parameter estimation with Maximum Likelihood</a></li>
+  <li><a href="#forecasting-with-the-copula-model" id="toc-forecasting-with-the-copula-model" class="nav-link" data-scroll-target="#forecasting-with-the-copula-model">Forecasting with the Copula model</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>ARMA (<a href="https://en.wikipedia.org/wiki/Autoregressive%E2%80%93moving-average_model?ref=sarem-seitz.com">AutoRegressive – Moving Average</a>) models are arguably the most popular approach to time-series forecasting. Unfortunately, plain ARMA is made for Gaussian distributed data only. On the one hand, you can often still use ARMA by transforming the raw data. On the other hand, this typically makes probabilistic forecasts quite tedious.</p>
+<p>One approach to apply ARMA to non-Normal data are Copula models. Roughly, the latter allow us to exchange the Gaussian marginal for any other continuous distribution. At the same time, they preserve the implicit time-dependency between observations that is imposed by ARMA.</p>
+<p>If this sounds confusing, I suggest reading the next paragraph carefully. Also, you might want to read some external sources for a deeper understanding, too.</p>
+</section>
+<section id="what-are-copulas-and-how-can-we-use-them-with-arma" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-copulas-and-how-can-we-use-them-with-arma">What are Copulas and how can we use them with ARMA?</h2>
+<p>Informally, Copulas (or Copulae if you are a Latin hardliner) define joint cumulative distribution functions (c.d.f.) for unit-uniform random variables. Formally, we can describe this as <span class="math display">\[
+\begin{gathered}
+C\left(u_1, \ldots, u_m\right)=P\left(U_1 \leq u_1, \ldots, U_m \leq u_m\right) \\
+U_1, \ldots, U_M \stackrel{\text { i.i.d }}{\sim} \mathcal{U}(0,1)
+\end{gathered}
+\]</span> That property alone is quite unspectacular as uniform random variables are not very expressive for practical problems. However, an important result in probability theory will make things more interesting.</p>
+<p>The <a href="http://probability%20integral%20transform/">probability integral transform</a> states that we can transform any continuous random variable to a uniform one by plugging it into its own c.d.f.:</p>
+<blockquote class="blockquote">
+<p>Let <span class="math inline">\(X\)</span> be continuous with c.d.f. <span class="math inline">\(F_X(x)\)</span>, then <span class="math inline">\(F_X(X) \sim \mathcal{U}(0,1)\)</span></p>
+</blockquote>
+<p>We can verify this empirically for a standard Normal example:</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distributions</span>, <span class="bu">Plots</span>, <span class="bu">StatsPlots</span>, <span class="bu">Random</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">123</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> <span class="fu">rand</span>(<span class="fu">Normal</span>(),<span class="fl">10000</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>transformed_sample <span class="op">=</span> <span class="fu">cdf</span>.(<span class="fu">Normal</span>(), sample)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>line <span class="op">=</span> <span class="fu">collect</span>(<span class="op">-</span><span class="fl">3</span><span class="op">:</span><span class="fl">0.01</span><span class="op">:</span><span class="fl">3</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>line_transformed <span class="op">=</span> <span class="fu">collect</span>(<span class="fl">0</span><span class="op">:</span><span class="fl">0.1</span><span class="op">:</span><span class="fl">1</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>p_sample <span class="op">=</span> <span class="fu">histogram</span>(sample,normalize<span class="op">=</span><span class="cn">true</span>, label<span class="op">=:</span>none,title <span class="op">=</span> <span class="st">"Gaussian sample"</span>,fmt<span class="op">=:</span>png)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(p_sample, line, <span class="fu">pdf</span>.(<span class="fu">Normal</span>(),line),color<span class="op">=:</span>red,lw<span class="op">=</span><span class="fl">3</span>,label<span class="op">=</span><span class="st">"Theoretical density"</span>,fmt<span class="op">=:</span>png)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>p_transformed <span class="op">=</span> <span class="fu">histogram</span>(transformed_sample,normalize<span class="op">=</span><span class="cn">true</span>, label<span class="op">=:</span>none,legend<span class="op">=:</span>bottomright,title<span class="op">=</span><span class="st">"Transformed sample"</span>,fmt<span class="op">=:</span>png)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(p_transformed, line_transformed, <span class="fu">pdf</span>.(<span class="fu">Uniform</span>(),line_transformed),color<span class="op">=:</span>red,lw<span class="op">=</span><span class="fl">3</span>,label<span class="op">=</span><span class="st">"Theoretical density"</span>,fmt<span class="op">=:</span>png)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p_sample,p_transformed,size<span class="op">=</span>(<span class="fl">1200</span>,<span class="fl">600</span>),fmt<span class="op">=:</span>png)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<p><img src="arma-forecasting-for-non-gaussian-time-series-data-using-copulas_files/figure-html/cell-2-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>As the inverse of a c.d.f. is the quantile function, we can easily invert this transformation. Even cooler, we can transform a uniform random variable to any continuous random variable via <span class="math display">\[
+\begin{gathered}
+P\left(F_X^{-1}(U) \leq x\right)=F_X(x) \\
+F_X^{-1}(\cdot):=\text { inverse (quantile) function of } F_X(\cdot)
+\end{gathered}
+\]</span> This inverse transformation will become relevant later on.</p>
+<section id="combining-copulas-and-the-inverse-probability-transform" class="level3">
+<h3 class="anchored" data-anchor-id="combining-copulas-and-the-inverse-probability-transform">Combining Copulas and the inverse probability transform</h3>
+<p>In conjunction with Copulas, this allows us to separate the marginal distributions from the dependency structure of joint random variables.</p>
+<p>A concrete example: Consider two random variables, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> with standard Gamma and Beta marginal distributions, i.e. <span class="math display">\[
+X \sim \Gamma(1,1), \quad Y \sim \mathcal{B}(1,1)
+\]</span> With the help of a Copula and the probability integral transform, we can now define a joint c.d.f over both variables such that we preserve their marginal distributions: <span class="math display">\[
+P(X \leq x, Y \leq y)=C\left(F_X(x), F_Y(y)\right)
+\]</span></p>
+</section>
+<section id="introducing-the-gaussian-copula" class="level3">
+<h3 class="anchored" data-anchor-id="introducing-the-gaussian-copula">Introducing the Gaussian Copula</h3>
+<p>So far, we haven’t specified any Copula function yet. A simplistic one is the Gaussian Copula, which is defined as follows: <span class="math display">\[
+\begin{gathered}
+C_{\text {Gauss }}\left(u_1, \ldots, u_m ; R\right)=\Phi_R\left(\Phi^{-1}\left(u_1\right), \ldots, \Phi^{-1}\left(u_m\right)\right)\\\\
+\Phi_R(\cdot, \ldots, \cdot):= \text{Joint c.d.f. of multivariate Gaussian s.t.}\\
+\mu=0, \Sigma=R \\
+\operatorname{diag}(R)=1\\\\
+\Phi^{-1}(\cdot):= \text{Quantile function of standard Gaussian}
+\end{gathered}
+\]</span> If we combine this with the Gamma-Beta example from before, we get the following Gaussian Copula joint c.d.f.: <span class="math display">\[
+P(X \leq x, Y \leq y)=\Phi_R\left(\Phi^{-1}\left(F_X(x)\right), \Phi^{-1}\left(F_Y(y)\right)\right)
+\]</span> The implicit rationale behind this approach can be described in three steps:</p>
+<ol type="1">
+<li>Transform the <strong>Gamma and Beta marginals into Uniform marginals</strong> via the respective <strong>c.d.f.s</strong></li>
+<li>Transform the <strong>Uniform marginals into standard Normal marginals</strong> via the <strong>quantile functions</strong></li>
+<li>Define the <strong>joint distribution via the multivariate Gaussian c.d.f.</strong> with zero mean, unit variance and non-zero covariance (covariance matrix R)</li>
+</ol>
+<p>By inverting these steps, we can easily sample from a bi-variate random variable that has the above properties. I.e. standard Gamma/Beta marginals with Gaussian Copula dependencies:</p>
+<ol type="1">
+<li>Draw a sample from a bi-variate Gaussian with mean zero, unit variance and non-zero covariance (covariance matrix R). You now have <strong>two correlated standard Gaussian variables</strong>.</li>
+<li>Transform both variables with the standard Gaussian c.d.f. - you now have <strong>two correlated Uniform variables</strong>. (= probability integral transform)</li>
+<li>Transform these variables with the standard Beta and Gamma quantile functions - you now have <strong>a pair of correlated Gamma-Beta variables</strong>. (= inverse probability integral transform)</li>
+</ol>
+<p>Notice that we could drop the zero-mean, unit-variance assumption on the multivariate Gaussian. In that case we would have to adjust the Gaussian c.d.f. to the corresponding marginals in order to keep the integral probability transform valid.</p>
+<p>Since we are only interested in the dependency structure (i.e.&nbsp;covariances), standard Gaussian marginals are sufficient and easier to deal with.</p>
+<p>Now let us sample some data in Julia:</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Measures</span>, <span class="bu">Random</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">123</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 1: Sample bi-variate Gaussian data with zero mean and unit variance</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> <span class="fu">zeros</span>(<span class="fl">2</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> [<span class="fl">1</span> <span class="fl">0.5</span>; <span class="fl">0.5</span> <span class="fl">1</span>]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> <span class="fu">rand</span>(<span class="fu">MvNormal</span>(mu,R),<span class="fl">10000</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 2: Transform the data via the standard Gaussian c.d.f.</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>sample_uniform <span class="op">=</span> <span class="fu">cdf</span>.(<span class="fu">Normal</span>(), sample)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Step 3: Transform the uniform marginals via the standard Gamma/Beta quantile functions</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>sample_transformed <span class="op">=</span> sample_uniform</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>sample_transformed[<span class="fl">1</span>,<span class="op">:</span>] <span class="op">=</span> <span class="fu">quantile</span>.(<span class="fu">Gamma</span>(),sample_transformed[<span class="fl">1</span>,<span class="op">:</span>])</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>sample_transformed[<span class="fl">2</span>,<span class="op">:</span>] <span class="op">=</span> <span class="fu">quantile</span>.(<span class="fu">Beta</span>(),sample_transformed[<span class="fl">2</span>,<span class="op">:</span>])</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot the result</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>scatterplot <span class="op">=</span> <span class="fu">scatter</span>(sample_transformed[<span class="fl">1</span>,<span class="op">:</span>],sample_transformed[<span class="fl">2</span>,<span class="op">:</span>],title<span class="op">=</span><span class="st">"Joint sample"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                      legend<span class="op">=:</span>none,fmt<span class="op">=:</span>png,xlab<span class="op">=</span><span class="st">"Gamma marginal"</span>, ylab<span class="op">=</span><span class="st">"Beta marginal"</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>gamma_line <span class="op">=</span> <span class="fu">collect</span>(<span class="fl">0</span><span class="op">:</span><span class="fl">0.1</span><span class="op">:</span><span class="fl">10</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>g_plot <span class="op">=</span> <span class="fu">histogram</span>(sample_transformed[<span class="fl">1</span>,<span class="op">:</span>],normalize<span class="op">=</span><span class="cn">true</span>, label<span class="op">=:</span>none,title <span class="op">=</span> <span class="st">"Gamma marginal"</span>,fmt<span class="op">=:</span>png)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(g_plot, gamma_line, <span class="fu">pdf</span>.(<span class="fu">Gamma</span>(),gamma_line),color<span class="op">=:</span>red,lw<span class="op">=</span><span class="fl">3</span>,label<span class="op">=</span><span class="st">"Theoretical density"</span>,fmt<span class="op">=:</span>png)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>beta_line <span class="op">=</span> <span class="fu">collect</span>(<span class="fl">0</span><span class="op">:</span><span class="fl">0.01</span><span class="op">:</span><span class="fl">1</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>b_plot <span class="op">=</span> <span class="fu">histogram</span>(sample_transformed[<span class="fl">2</span>,<span class="op">:</span>],normalize<span class="op">=</span><span class="cn">true</span>, label<span class="op">=:</span>none,legend<span class="op">=:</span>bottomright,title<span class="op">=</span><span class="st">"Beta marginal"</span>,fmt<span class="op">=:</span>png)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(b_plot, beta_line, <span class="fu">pdf</span>.(<span class="fu">Beta</span>(),beta_line),color<span class="op">=:</span>red,lw<span class="op">=</span><span class="fl">3</span>,label<span class="op">=</span><span class="st">"Theoretical density"</span>,fmt<span class="op">=:</span>png)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(scatterplot,<span class="fu">plot</span>(g_plot,b_plot),layout<span class="op">=</span>(<span class="fl">2</span>,<span class="fl">1</span>),size<span class="op">=</span>(<span class="fl">1200</span>,<span class="fl">600</span>),fmt<span class="op">=:</span>png,margin<span class="op">=</span><span class="fl">7.5</span>mm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<p><img src="arma-forecasting-for-non-gaussian-time-series-data-using-copulas_files/figure-html/cell-3-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Congratulations, you have just sampled from your first Copula model!</p>
+</section>
+<section id="but-wait---i-want-to-fit-a-model" class="level3">
+<h3 class="anchored" data-anchor-id="but-wait---i-want-to-fit-a-model">But wait - I want to fit a model!</h3>
+<p>Let’s say we observed the above data without the underlying generating process. We only presume that we know that Gamma-Beta marginals and a Gaussian copula are a good choice. How could we fit the model parameters (i.e.&nbsp;‘learn’ them in the Machine Learning world)?</p>
+<p>As often for statistical models, <a href="https://en.wikipedia.org/wiki/Maximum_likelihood_estimation?ref=sarem-seitz.com">Maximum Likelihood</a> is a good approach. However, we need a density function for that, so what do we do? We already found out, that a Copula model describes a valid c.d.f. for continuous marginals. Thus, we can derive the corresponding probability density by taking derivatives: <span class="math display">\[
+\begin{gathered}
+p\left(x_1, \ldots, x_m\right) \\
+=\frac{\partial^m}{\partial x_1 \cdots \partial x_m} F\left(x_1, \ldots, x_m\right) \\
+=\frac{\partial^m}{\partial x_1 \cdots \partial x_m} C\left(F\left(x_1\right), \ldots, F\left(x_m\right)\right) \\
+=c\left(F\left(x_1\right), \ldots, F\left(x_m\right)\right) \cdot \frac{\partial}{\partial x_1} F\left(x_1\right) \cdots \frac{\partial}{\partial x_m} F\left(x_m\right) \\
+=c\left(F\left(x_1\right), \ldots, F\left(x_m\right)\right) \cdot p\left(x_1\right) \cdots p\left(x_m\right)
+\end{gathered}
+\]</span> (where <span class="math inline">\(c(\cdot, \ldots, \cdot)\)</span> is called a ‘Copula density function’; <span class="math inline">\(p(\cdot)\)</span> denotes a probability density function)</p>
+<p>Now, for the Gaussian Copula, one can prove the following Copula density function: <span class="math display">\[
+c_{\text {Gauss }}\left(u_1, \ldots, u_m ; R\right)=\frac{1}{\sqrt{|R|}} \exp \left(-0.5\left(\begin{array}{c}
+\Phi^{-1}\left(u_1\right) \\
+\vdots \\
+\Phi^{-1}\left(u_m\right)
+\end{array}\right)^T \cdot\left(R^{-1}-I\right) \cdot\left(\begin{array}{c}
+\Phi^{-1}\left(u_1\right) \\
+\vdots \\
+\Phi^{-1}\left(u_m\right)
+\end{array}\right)\right)
+\]</span></p>
+</section>
+</section>
+<section id="arma-with-non-normal-data-via-copulas" class="level2">
+<h2 class="anchored" data-anchor-id="arma-with-non-normal-data-via-copulas">ARMA with non-normal data via Copulas</h2>
+<p>Finally, we can return to our initial problem. For this example, we will focus on the stationary ARMA(1,1) model: <span class="math display">\[
+\begin{gathered}
+y_t=\phi y_{t-1}+\theta \epsilon_{t-1}+\epsilon_t \\
+\epsilon_t \sim \mathcal{N}\left(0, \sigma^2\right) \\
+|\phi|&lt;1, \quad|\theta|&lt;1
+\end{gathered}
+\]</span> For a time-series with <span class="math inline">\(T\)</span> observations, we can derive the unconditional, stationary distribution (see e.g.&nbsp;<a href="https://math.stackexchange.com/questions/1265466/the-autocovariance-function-of-arma1-1?ref=sarem-seitz.com">here</a>): <span class="math display">\[
+\left(\begin{array}{c}
+y_1 \\
+\vdots \\
+y_T
+\end{array}\right) \sim \mathcal{N}\left(0, \Sigma=\left[\begin{array}{cccc}
+\gamma(0) &amp; \gamma(1) &amp; \cdots &amp; \gamma(T-1) \\
+\gamma(1) &amp; \gamma(0) &amp; \cdots &amp; \gamma(T-2) \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\gamma(T-1) &amp; \gamma(T-2) &amp; \cdots &amp; \gamma(0)
+\end{array}\right]\right)
+\]</span> where <span class="math inline">\(\gamma(h)\)</span> the ARMA <span class="math inline">\((1,1)\)</span> auto-covariance function for lag <span class="math inline">\(h\)</span> : <span class="math display">\[
+\gamma(h)= \begin{cases}\sigma^2\left(1+\frac{(\phi+\theta)^2}{1-\theta^2}\right) &amp; h=0 \\ \sigma^2\left((\phi+\theta) \phi^{h-1}+\frac{(\phi+\theta)^2 \phi^h}{1-\phi^2}\right) &amp; h&gt;0\end{cases}
+\]</span> Informally, the unconditional distribution considers a fixed-length time-series as a single, multivariate random vector. As a consequence, it doesn’t matter whether we are sampling from the unconditional distribution or the usual ARMA equations (for an equally long time-series) themselves.</p>
+<p>In some instances, such as this one, the unconditional distribution is easier to work with.</p>
+<p>Also, notice that the unconditional marginal distributions (the distributions of the y_t’s) are the same regardless of the time-lag we are looking at. In fact, we have zero-mean Gaussians with variance equal to the auto-covariance function at zero.</p>
+<p>Next, let us define: <span class="math display">\[
+\begin{gathered}
+G=\frac{1}{\gamma(0)} \cdot I \\
+\tilde{\Sigma}=G \Sigma \\
+\Rightarrow \operatorname{diag}(\tilde{\Sigma})=1
+\end{gathered}
+\]</span> The transformed covariance matrix now implies unit variance while preserving the dependency structure of the unconditional time-series. Literally, we have just derived the <strong>correlation matrix</strong> but let us stick to the idea of a <strong>standardized covariance matrix</strong>.</p>
+<p>If we plug this back into a Gaussian copula, we obtain what we could call an ARMA(1,1) Copula. Now, we could use the ARMA(1,1) Copula dependency structure together with any continuous marginal distribution. For example, we could define <span class="math display">\[
+\begin{gathered}
+p\left(y_t\right)=\operatorname{Exp}\left(y_t \mid 0.5\right) \\
+=\frac{1}{0.5} e^{-\frac{y t}{0.5}} \\
+y_t&gt;0
+\end{gathered}
+\]</span> i.e.&nbsp;the unconditional marginals are Exponential-distributed with rate parameter 0.5. Putting everything together, we obtain the following unconditional density: <span class="math display">\[
+p\left(\begin{array}{c}
+y_1 \\
+\vdots \\
+y_T
+\end{array}\right)=\prod_{t=1}^T \operatorname{Exp}\left(y_t \mid 0.5\right) \cdot c_{\text {Gauss }}\left(F_{\operatorname{Exp}(0.5)}\left(y_1\right), \ldots, F_{\operatorname{Exp}(0.5)}\left(y_T\right) ; G \Sigma G\right)
+\]</span> Let us combine everything so far and plot an example:</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">LinearAlgebra</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> ARMA_1_1</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    phi</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    theta</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    sigma</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">Broadcast</span>.<span class="fu">broadcastable</span>(m<span class="op">::</span><span class="dt">ARMA_1_1</span>) <span class="op">=</span> (m,)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">construct_autocovariance_matrix</span>(m<span class="op">::</span><span class="dt">ARMA_1_1</span>,T<span class="op">=</span><span class="fl">100</span>)    </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    autocovariance_matrix <span class="op">=</span> <span class="fu">get_autocovariance</span>.(m, <span class="fu">construct_time_matrix</span>(T))</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> autocovariance_matrix</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">construct_time_matrix</span>(T)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    times <span class="op">=</span> <span class="fu">collect</span>(<span class="fl">0</span><span class="op">:</span>T<span class="op">-</span><span class="fl">1</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    time_matrix <span class="op">=</span> <span class="fu">zeros</span>(T,T)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> t <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>T</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        time_matrix[t,<span class="fl">1</span><span class="op">:</span>t<span class="op">-</span><span class="fl">1</span>] <span class="op">=</span> <span class="fu">reverse</span>(times[<span class="fl">2</span><span class="op">:</span>t])</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        time_matrix[t,t<span class="op">:</span>T] <span class="op">=</span> times[<span class="fl">1</span><span class="op">:</span>T<span class="op">-</span>t<span class="op">+</span><span class="fl">1</span>] </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> time_matrix</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">get_autocovariance</span>(m<span class="op">::</span><span class="dt">ARMA_1_1</span>,h)        </span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> h <span class="op">==</span> <span class="fl">0</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.sigma<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> (<span class="fl">1</span> <span class="op">+</span> (m.phi <span class="op">+</span> m.theta)<span class="op">^</span><span class="fl">2</span> <span class="op">/</span> (<span class="fl">1</span> <span class="op">-</span> m.phi<span class="op">^</span><span class="fl">2</span>))</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.sigma<span class="op">^</span><span class="fl">2</span> <span class="op">*</span> ((m.phi <span class="op">+</span> m.theta)<span class="op">*</span>m.phi<span class="op">^</span>(h<span class="op">-</span><span class="fl">1</span>) <span class="op">+</span> (m.phi <span class="op">+</span> m.theta)<span class="op">^</span><span class="fl">2</span><span class="op">*</span>m.phi<span class="op">^</span>h <span class="op">/</span> (<span class="fl">1</span> <span class="op">-</span> m.phi<span class="op">^</span><span class="fl">2</span>))</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">normalize_covariance</span>(Sigma)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    G <span class="op">=</span> <span class="fu">Diagonal</span>(<span class="fl">1</span> <span class="op">./</span> <span class="fu">diag</span>(Sigma))</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> G<span class="op">*</span>Sigma</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co">#-------------------------</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">123</span>)</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> <span class="fl">500</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>arma_model <span class="op">=</span> <span class="fu">ARMA_1_1</span>(<span class="fl">0.75</span>,<span class="op">-</span><span class="fl">0.5</span>,<span class="fl">1</span>)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>Sigma <span class="op">=</span> <span class="fu">construct_autocovariance_matrix</span>(arma_model,T)</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>Sigma_tilde <span class="op">=</span> <span class="fu">normalize_covariance</span>(Sigma)</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>unconditional <span class="op">=</span> <span class="fu">MvNormal</span>(<span class="fu">zeros</span>(T),Sigma_tilde)</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>arma_sample <span class="op">=</span> <span class="fu">rand</span>(unconditional)</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>exp_target <span class="op">=</span> <span class="fu">Exponential</span>(<span class="fl">0.5</span>)</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>exp_sample <span class="op">=</span> <span class="fu">quantile</span>.(exp_target, <span class="fu">cdf</span>.(<span class="fu">Normal</span>(),arma_sample))</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>arma_plot <span class="op">=</span> <span class="fu">plot</span>(arma_sample,legend<span class="op">=:</span>none,title <span class="op">=</span> <span class="st">"ARMA(1,1) sample (standardized covariance matrix)"</span>,fmt<span class="op">=:</span>png)</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>exp_plot <span class="op">=</span> <span class="fu">plot</span>(exp_sample,legend<span class="op">=:</span>none,title <span class="op">=</span> <span class="st">"Transformed ARMA(1,1) sample"</span>)</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    arma_plot,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    exp_plot,</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    layout <span class="op">=</span> (<span class="fl">2</span>,<span class="fl">1</span>),</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>(<span class="fl">1200</span>,<span class="fl">600</span>),</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    fmt<span class="op">=:</span>png</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<p><img src="arma-forecasting-for-non-gaussian-time-series-data-using-copulas_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Clearly, the samples from the Copula model are not Gaussian anymore. In fact, we observe a single draw from a ARMA(1,1) Copula with Exponential-distributed marginals.</p>
+</section>
+<section id="parameter-estimation-with-maximum-likelihood" class="level2">
+<h2 class="anchored" data-anchor-id="parameter-estimation-with-maximum-likelihood">Parameter estimation with Maximum Likelihood</h2>
+<p>So far, we have only been able to simulate a time-series from the ARMA(1,1) Copula model. In order to fit the model, we will apply Maximum Likelihood. When using Copulas for cross-sectional data, it is usually possible to separate fitting the marginal distributions from fitting the Copula. Unfortunately, this does not work here.</p>
+<p>As we only observe one realization of the process per marginal, fitting a distribution based on the marginals alone is impossible. Rather, we now need to optimize both the marginals and the copula at once. This begs the additional difficulty of having to deal with the marginal’s parameters inside the marginal’s c.d.f..</p>
+<p>Namely, our Maximum likelihood objective looks as follows: <span class="math display">\[
+=\max _{\phi, \theta, \sigma, \lambda} \log c\left(F_\lambda\left(y_1\right), \ldots, F_\lambda\left(x_m\right) ; R(\phi, \theta, \sigma)\right)+\sum_{t=1}^T \log p_\lambda\left(y_t\right)
+\]</span> where - <span class="math inline">\(R(\phi, \theta, \sigma):=\)</span> Standardized Gaussian Copula covariance matrix (with respect to the ARMA parameters) - <span class="math inline">\(F_\lambda(\cdot):=\)</span> c.d.f. of an Exponential distribution with paramater - <span class="math inline">\(\lambda\)</span> <span class="math inline">\(p_\lambda(\cdot):=\)</span> probability density of an Exponential distribution with parameter <span class="math inline">\(\lambda\)</span></p>
+<p>Optimizing this can become quite ugly as derivatives with respect to a c.d.f.’s parameters are usually fairly complex. Luckily, the Exponential distribution is quite simple and respective derivatives are easily found. Even better, the <a href="https://julianlsolvers.github.io/Optim.jl/stable/?ref=sarem-seitz.com">Optim.jl</a> package can optimize our log-likelihood via <a href="https://en.wikipedia.org/wiki/Finite_difference?ref=sarem-seitz.com">finite differences</a> without requiring any derivatives at all.</p>
+<p>If we chose another distribution than the Exponential, finite differences might not suffice. In that case, we would have to either implement the c.d.f. derivatives by hand or hope that <a href="https://juliadiff.org/ChainRulesCore.jl/stable/?ref=sarem-seitz.com">ChainRules.jl</a> can handle them for us.</p>
+<p>Also, we transform our model parameters to the correct domains via exp and tanh instead of applying Box constraints in the Optim optimizer. This worked reasonably accurate and fast here:</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Optim</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">gauss_copula_ll</span>(R,y)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="fu">size</span>(R,<span class="fl">2</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    yt <span class="op">=</span> <span class="fu">transpose</span>(y)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    R_stab <span class="op">=</span> R <span class="op">.+</span> <span class="fu">Diagonal</span>(<span class="fu">ones</span>(n)<span class="op">.*</span><span class="fl">1e-6</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> <span class="fu">log</span>(<span class="fu">det</span>(R_stab))  <span class="op">-</span><span class="fl">0.5</span><span class="fu">*</span>(<span class="fu">yt*</span>(<span class="fu">inv</span>(R)<span class="op">.-</span><span class="fu">Diagonal</span>(<span class="fu">ones</span>(n)))<span class="fu">*transpose</span>(yt))[<span class="fl">1</span>]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">likelihood_loss</span>(params)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    y_uniform <span class="op">=</span> <span class="fu">cdf</span>.(<span class="fu">Exponential</span>(<span class="fu">exp</span>(params[<span class="fl">1</span>])),exp_sample)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> <span class="fu">ARMA_1_1</span>(<span class="fu">tanh</span>(params[<span class="fl">2</span>]),<span class="fu">tanh</span>(params[<span class="fl">3</span>]),<span class="fu">exp</span>(params[<span class="fl">4</span>]))</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    autocov <span class="op">=</span> <span class="fu">construct_autocovariance_matrix</span>(model,<span class="fu">length</span>(exp_sample))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    normalized_autocov <span class="op">=</span> <span class="fu">Matrix</span>(<span class="fu">Hermitian</span>(<span class="fu">normalize_covariance</span>(autocov)))</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    y_normal <span class="op">=</span> <span class="fu">quantile</span>.(<span class="fu">Normal</span>(), y_uniform)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> <span class="fu">-gauss_copula_ll</span>(normalized_autocov,y_normal) <span class="op">-</span> <span class="fu">sum</span>(<span class="fu">logpdf</span>.(<span class="fu">Exponential</span>(<span class="fu">exp</span>(params[<span class="fl">1</span>])),exp_sample))</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> <span class="fu">optimize</span>(likelihood_loss,[<span class="fl">0</span>.,<span class="fl">0</span>.,<span class="fl">0</span>.,<span class="op">-</span><span class="fl">1</span>],<span class="fu">LBFGS</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code> * Status: success (objective increased between iterations)
+
+ * Candidate solution
+    Final objective value:     1.180344e+02
+
+ * Found with
+    Algorithm:     L-BFGS
+
+ * Convergence measures
+    |x - x'|               = 2.73e-10 ≰ 0.0e+00
+    |x - x'|/|x'|          = 2.73e-10 ≰ 0.0e+00
+    |f(x) - f(x')|         = 1.14e-13 ≰ 0.0e+00
+    |f(x) - f(x')|/|f(x')| = 9.63e-16 ≰ 0.0e+00
+    |g(x)|                 = 8.21e-09 ≤ 1.0e-08
+
+ * Work counters
+    Seconds run:   58  (vs limit Inf)
+    Iterations:    13
+    f(x) calls:    40
+    ∇f(x) calls:   40</code></pre>
+</div>
+</div>
+<p>Now, let us evaluate the result. For the Exponential distribution, the estimated parameter should be close to the true parameter. Regarding the latent ARMA parameters, we primarily need the estimated auto-covariance to be close to ground-truth. This is indeed the case here:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>lambda <span class="op">=</span> <span class="fu">exp</span>(res.minimizer[<span class="fl">1</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> <span class="fu">tanh</span>(res.minimizer[<span class="fl">2</span>])</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> <span class="fu">tanh</span>(res.minimizer[<span class="fl">3</span>])</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>sigma <span class="op">=</span> <span class="fu">exp</span>(res.minimizer[<span class="fl">4</span>])</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>estimated_marginal <span class="op">=</span> <span class="fu">Exponential</span>(lambda)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>estimated_arma_model <span class="op">=</span> <span class="fu">ARMA_1_1</span>(phi,theta,sigma) </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>true_acf <span class="op">=</span> <span class="fu">normalize_covariance</span>(<span class="fu">construct_autocovariance_matrix</span>(arma_model,<span class="fl">20</span>))[<span class="fl">1</span>,<span class="op">:</span>]</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>model_acf <span class="op">=</span> <span class="fu">normalize_covariance</span>(<span class="fu">construct_autocovariance_matrix</span>(estimated_arma_model,<span class="fl">20</span>))[<span class="fl">1</span>,<span class="op">:</span>]</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>lambda_plot <span class="op">=</span> <span class="fu">groupedbar</span>([[<span class="fl">0.5</span>] [lambda]],labels<span class="op">=</span>[<span class="st">"True Exponential Parameter"</span> <span class="st">"Model Exponential Parameter"</span>]</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>            ,xlab<span class="op">=</span><span class="st">"Lag"</span>,title<span class="op">=</span><span class="st">"True VS. estimated parameter of Exponential distribution"</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>            fmt<span class="op">=:</span>png,size<span class="op">=</span>(<span class="fl">1000</span>,<span class="fl">500</span>), margin<span class="op">=</span><span class="fl">5</span>mm)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>acf_plot <span class="op">=</span> <span class="fu">groupedbar</span>([true_acf model_acf],labels<span class="op">=</span>[<span class="st">"True ACF"</span> <span class="st">"Model ACF"</span>],xlab<span class="op">=</span><span class="st">"Lag"</span>,title<span class="op">=</span><span class="st">"True VS. estimated ACF"</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>            fmt<span class="op">=:</span>png,size<span class="op">=</span>(<span class="fl">1000</span>,<span class="fl">500</span>), margin<span class="op">=</span><span class="fl">5</span>mm)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lambda_plot,acf_plot,layout<span class="op">=</span>(<span class="fl">2</span>,<span class="fl">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<p><img src="arma-forecasting-for-non-gaussian-time-series-data-using-copulas_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="forecasting-with-the-copula-model" class="level2">
+<h2 class="anchored" data-anchor-id="forecasting-with-the-copula-model">Forecasting with the Copula model</h2>
+<p>Finally, we want to use our model to produce actual forecasts. Due to the Copula construction, we can derive the conditional forecast density in closed form. As we will see however, mean and quantile forecasts need to be calculated numerically.</p>
+<p>First, recall how the Copula model defines a joint density over all ‘training’-observations: <span class="math display">\[
+p\left(y_1, \ldots, y_T\right)=c\left(F\left(y_1\right), \ldots, F\left(y_T\right)\right) \cdot p\left(y_1\right) \cdots p\left(y_T\right)
+\]</span> In order to forecast a conditional density at h steps ahead, we simply need to follow standard probability laws: <span class="math display">\[
+\begin{gathered}
+p\left(y_{T+h} \mid y_1, \ldots, y_T\right) \\
+=\frac{p\left(y_{T+h}, y_1, \ldots, y_T\right)}{p\left(y_1, \ldots, y_T\right)} \\
+=\frac{c\left(F\left(y_{T+h}\right), F\left(y_1\right), \ldots, F\left(y_T\right)\right) \cdot p\left(y_{T+h}\right) \cdot p\left(y_1\right) \cdots p\left(y_T\right)}{c\left(F\left(y_1\right), \ldots, F\left(y_T\right)\right) \cdot p\left(y_1\right) \cdots p\left(y_T\right)} \\
+=\frac{c\left(F\left(y_{T+h}\right), F\left(y_1\right), \ldots, F\left(y_T\right)\right)}{c\left(F\left(y_1\right), \ldots, F\left(y_T\right)\right)} \cdot p\left(y_{T+h}\right)
+\end{gathered}
+\]</span> This boils down to the ratio of two Copula evaluations times the marginal density evaluated at the target point. However, we still need to find a way to use this equation to calculate a mean forecast and a forecast interval.</p>
+<p>As the density is arguably fairly complex, we won’t even try to derive any of these values in closed form. Rather, we use numerical methods to find the target quantities.</p>
+<p>For the mean, we simply use quadrature to approximate the usual integral <span class="math display">\[
+\mathbb{E}\left[y_{T+h} \mid y_1, \ldots, y_T\right] \approx \int_0^U y_{T+h} \cdot p\left(y_{T+h} \mid y_1, \ldots, y_T\right) d y_{T+h}
+\]</span> with U a sufficiently large value to capture most of the probability mass (approximation up to infinity is obviously not possible).</p>
+<p>For the forecast interval, we use the 90% prediction interval. Thus, we need to find the 5% and the 95% quantiles of the conditional density. This can be done via another approximation, this time through an Ordinary Differential Equation: <span class="math display">\[
+\frac{d F^{-1}}{d u}=\frac{1}{p\left(F^{-1}(u) \mid y_1, \ldots, y_T\right)}
+\]</span> with <span class="math inline">\(F^{-1}(u)\)</span> the quantile function corresponding to <span class="math inline">\(p\left(y_{T+h} \mid y_1, \ldots, y_T\right)\)</span> evaluated at <span class="math inline">\(u \in[0.0,1.0]\)</span></p>
+<p>For a derivation of this formula, see, for example, <a href="https://blogs.sas.com/content/iml/2022/04/06/differential-equation-quantiles.html?ref=sarem-seitz.com#:~:text=Appendix%3A%20Derive%20the%20quantile%20ODE">here</a>. Integrating the ODE from zero up to the target quantile yields the respective target quantile value. The latter can be done numerically via <a href="https://diffeq.sciml.ai/stable/tutorials/ode_example/?ref=sarem-seitz.com">DifferentialEquations.jl</a>.</p>
+<p>With this, we can finally calculate the forecast and plot the result:</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">QuadGK</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DifferentialEquations</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#precompute autocovariance matrix to save some computation time</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> <span class="fl">500</span><span class="op">+</span><span class="fl">20</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>autocovariance <span class="op">=</span> <span class="fu">construct_autocovariance_matrix</span>(estimated_arma_model, T)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>normalized_autocov <span class="op">=</span> <span class="fu">normalize_covariance</span>(autocovariance) </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#this yields the conditional density for any ARMA, any Exponential marginal and at any 'h' in the future</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">evaluate_conditional_density_forecast</span>(x, model<span class="op">::</span><span class="dt">ARMA_1_1</span>, marginal<span class="op">::</span><span class="dt">Distributions.Exponential</span>, y, t_forecast<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    T_train <span class="op">=</span> <span class="fu">length</span>(y)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    target_cov <span class="op">=</span> normalized_autocov[<span class="fu">vcat</span>(<span class="fu">collect</span>(<span class="fl">1</span><span class="op">:</span>T_train),T_train<span class="op">+</span>t_forecast),<span class="fu">vcat</span>(<span class="fu">collect</span>(<span class="fl">1</span><span class="op">:</span>T_train),T_train<span class="op">+</span>t_forecast)]</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    y_normal <span class="op">=</span> <span class="fu">quantile</span>.(<span class="fu">Normal</span>(),<span class="fu">cdf</span>.(marginal,y))</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    x_normal <span class="op">=</span> <span class="fu">quantile</span>(<span class="fu">Normal</span>(),<span class="fu">cdf</span>(marginal,x))</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    copula_density_train <span class="op">=</span> <span class="fu">exp</span>(<span class="fu">gauss_copula_ll</span>(target_cov[<span class="fl">1</span><span class="op">:</span>T_train,<span class="fl">1</span><span class="op">:</span>T_train],y_normal))</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    copula_density_full <span class="op">=</span> <span class="fu">exp</span>(<span class="fu">gauss_copula_ll</span>(target_cov,<span class="fu">vcat</span>(y_normal,x_normal)))</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    marginal_density <span class="op">=</span> <span class="fu">pdf</span>(marginal,x)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> marginal_density <span class="op">*</span> copula_density_full<span class="op">/</span>copula_density_train     </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#conditional density at forecast period 't'</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="fu">p</span>(x,t) <span class="op">=</span> <span class="fu">evaluate_conditional_density_forecast</span>(x,estimated_arma_model,estimated_marginal,exp_sample,t)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co">#mean forecast uses Quadrature to approximate the intractable 'mean'-integral</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>mean_forecast <span class="op">=</span> [<span class="fu">quadgk</span>(<span class="fu">x-&gt;p</span>(x,t)<span class="op">*</span>x, <span class="fl">0</span>, <span class="fu">quantile</span>(estimated_marginal, <span class="fl">1</span> <span class="op">-</span> <span class="fl">1e-6</span>), rtol<span class="op">=</span><span class="fl">1e-4</span>)[<span class="fl">1</span>] for t <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>]</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co">#quantile forecast via differential equation: </span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co">#homepages.ucl.ac.uk/~ucahwts/lgsnotes/EJAM_Quantiles.pdf</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">approximate_quantile</span>(q, t<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">target_density</span>(x) <span class="op">=</span> <span class="fu">p</span>(x,t)</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">diffeq</span>(u,p,t) <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu">target_density</span>(u)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    u0<span class="op">=</span><span class="fl">1e-6</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    tspan<span class="op">=</span>(<span class="fl">0.0</span>,q)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    prob <span class="op">=</span> <span class="fu">ODEProblem</span>(diffeq,u0,tspan)</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    sol <span class="op">=</span> <span class="fu">solve</span>(prob,<span class="fu">Tsit5</span>(),reltol<span class="op">=</span><span class="fl">1e-4</span>,abstol<span class="op">=</span><span class="fl">1e-4</span>)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sol.u[<span class="kw">end</span>]</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="co">#10% prediction/forecast interval</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>lower_05 <span class="op">=</span> [<span class="fu">approximate_quantile</span>(<span class="fl">0.05</span>,t) for t <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>]</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>upper_95 <span class="op">=</span> [<span class="fu">approximate_quantile</span>(<span class="fl">0.95</span>,t) for t <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span>]</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a><span class="co">#plot the final result</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>ribbon_lower <span class="op">=</span> <span class="fu">vcat</span>(exp_sample[<span class="kw">end</span>],mean_forecast) <span class="op">.-</span> <span class="fu">vcat</span>(exp_sample[<span class="kw">end</span>],lower_05)</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>ribbon_upper <span class="op">=</span>  <span class="fu">vcat</span>(exp_sample[<span class="kw">end</span>],upper_95) <span class="op">.-</span> <span class="fu">vcat</span>(exp_sample[<span class="kw">end</span>],mean_forecast) </span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">collect</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">500</span>)[<span class="kw">end</span><span class="op">-</span><span class="fl">49</span><span class="op">:</span><span class="kw">end</span>],exp_sample[<span class="kw">end</span><span class="op">-</span><span class="fl">49</span><span class="op">:</span><span class="kw">end</span>],fmt<span class="op">=:</span>png,size<span class="op">=</span>(<span class="fl">1000</span>,<span class="fl">500</span>),label<span class="op">=</span><span class="st">"Last 50 observations from TS"</span>)</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fu">collect</span>(<span class="fl">500</span><span class="op">:</span><span class="fl">520</span>),<span class="fu">vcat</span>(exp_sample[<span class="kw">end</span>],mean_forecast),ribbon<span class="op">=</span>(ribbon_lower,ribbon_upper),fmt<span class="op">=:</span>png, label<span class="op">=</span><span class="st">"Forecast plus interval"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<p><img src="arma-forecasting-for-non-gaussian-time-series-data-using-copulas_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>This looks indeed quite reasonable and the forecast appears to converge to a stable distribution as we predict further ahead into the future.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>As we have seen, Copulas make it possible to extend well-known models to non-Gaussian data. This allowed us to transfer the simplicity of the ARMA model to Exponential marginals that were only defined for positive values.</p>
+<p>One complication arises when the size of the observed time-series becomes very large. In that case, the unconditional covariance matrix will scale poorly and the model fitting step will likely become impossible.</p>
+<p>Then, we need to find a computationally more efficient solution. One possible approach are <a href="https://arxiv.org/pdf/2109.04718.pdf?ref=sarem-seitz.com">Implicit Copulas</a> which define a Copula density through a chain of conditional densities.</p>
+<p>Of course, there are many other ways to integrate Copulas into classical statistical and Machine Learning models. For the latter, research is still a little sparse. However, I strongly believe that there is at least some potential for a modern application of these classic statistical objects.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p><strong>[1]</strong> Hamilton, James Douglas. Time series analysis. Princeton university press, 2020.</p>
+<p><strong>[2]</strong> Nelsen, Roger B. An introduction to copulas. Springer Science &amp; Business Media, 2007.</p>
+<p><strong>[3]</strong> Smith, Michael Stanley. Implicit copulas: An overview. Econometrics and Statistics, 2021.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
