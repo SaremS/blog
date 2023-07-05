@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/cointegrated-time-series-and-when-difference-transformations-might-be-bad.html",
       "/posts/facebook-prophet-covid-and-why-i-dont-trust-the-prophet.html",
       "/posts/probabilistic-cusum-for-change-point-detection.html",
       "/posts/multivariate-probabilistic-time-series-forecasting-with-lstm-and-gaussian-copula.html",
