@@ -2,6 +2,9 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/probabilistic-cusum-for-change-point-detection.html",
+      "/posts/multivariate-probabilistic-time-series-forecasting-with-lstm-and-gaussian-copula.html",
+      "/posts/lets-make-garch-more-flexible-with-normalizing-flows.html",
       "/posts/arma-forecasting-for-non-gaussian-time-series-data-using-copulas.html",
       "/posts/bayesian-machine-learning-and-julia-are-a-match-made-in-heaven.html",
       "/posts/when-is-bayesian-machine-learning-actually-useful.html",
