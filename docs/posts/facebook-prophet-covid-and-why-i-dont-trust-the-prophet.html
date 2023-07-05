@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sarem">
+<meta name="dcterms.date" content="2022-08-04">
+
+<title>blog - Facebook Prophet, Covid and why I don’t trust the Prophet</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Facebook Prophet, Covid and why I don’t trust the Prophet</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Time Series</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sarem </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 4, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-fundamental-flaw-of-facebook-prophet" id="toc-the-fundamental-flaw-of-facebook-prophet" class="nav-link" data-scroll-target="#the-fundamental-flaw-of-facebook-prophet">The fundamental flaw of Facebook Prophet</a></li>
+  <li><a href="#facebook-prophet-underperforms-against-a-toy-benchmark" id="toc-facebook-prophet-underperforms-against-a-toy-benchmark" class="nav-link" data-scroll-target="#facebook-prophet-underperforms-against-a-toy-benchmark">Facebook Prophet underperforms against a toy benchmark</a></li>
+  <li><a href="#takeaways-for-the-dedicated-prophet-user" id="toc-takeaways-for-the-dedicated-prophet-user" class="nav-link" data-scroll-target="#takeaways-for-the-dedicated-prophet-user">Takeaways for the dedicated Prophet user</a></li>
+  <li><a href="#alternatives-to-facebook-prophet" id="toc-alternatives-to-facebook-prophet" class="nav-link" data-scroll-target="#alternatives-to-facebook-prophet">Alternatives to Facebook Prophet</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Facebook Prophet is arguably one of the most widely known tools for time-series forecasting and related tasks. Ask any data scientist who works with time-series data if they know Prophet and the answer is likely either a yes or an annoyed yes.</p>
+<p>After all, Facebook Prophet has become quite a controversial tool for time-series problems. Some people don’t want to work without it anymore, <a href="https://medium.com/@valeman/benchmarking-facebook-prophet-53273c3ee9c6?ref=sarem-seitz.com">others clearly hate it</a>.</p>
+<p>However, whether you like it or not, <a href="https://github.com/facebook/prophet/issues/1416?ref=sarem-seitz.com">Prophet users seem to face considerable challenges when it comes to modelling the Covid-19 shock</a>. While, by now, people have found workaround, I’d argue that these issues are caused by a deeper problem with Facebook Prophet:</p>
+</section>
+<section id="the-fundamental-flaw-of-facebook-prophet" class="level2">
+<h2 class="anchored" data-anchor-id="the-fundamental-flaw-of-facebook-prophet">The fundamental flaw of Facebook Prophet</h2>
+<p>The most problematic aspect of Facebook Prophet is that it reduces time-series modelling to a curve-fitting task. Other approaches make auto-regressive dynamics a fundamental assumption. Prophet, on the other hand, merely tries to draw a least-error line through time against your data.</p>
+<p>More technically, the evolution of almost all dynamical systems depend on past realizations. We can write this as follows: <span class="math display">\[
+p\left(y_t, y_{t-1}, \ldots, y_1\right)=p\left(y_t \mid y_{t-1}\right) p\left(y_{t-1} \mid y_{t-2}\right) \cdots p\left(y_1\right)
+\]</span> Where we only consider dependence on the last observation and no hidden states.</p>
+<p>Most time-series models focus on the right-hand side. Facebook Prophet, however, is concerned with the left-hand side of the equation. Even worse, Prophet implicitly makes the following assumptions on top (see <a href="https://peerj.com/preprints/3190/?ref=sarem-seitz.com">Facebook Prophet paper</a>, page 14, for reference): <span class="math display">\[
+\begin{gathered}
+p\left(y_t, y_{t-1}, \ldots, y_t\right) \\
+=\mathcal{N}\left(y_t \mid m(t), \sigma^2\right) \cdot \mathcal{N}\left(y_{t-1} \mid m(t-1), \sigma^2\right) \cdots \mathcal{N}\left(y_1 \mid m(1), \sigma^2\right)
+\end{gathered}
+\]</span> This is problematic for at least three reasons:</p>
+<ol type="1">
+<li><strong>Dependence on past realizations is completely ignored</strong>. In the real-world, a single, large shock will quickly change the whole future trajectory of the time-series. This can trivially be accounted for by a dynamical model but not by Facebook Prophet.</li>
+<li><strong>The mean function needs to extrapolate outside the range of observed values</strong>. The way that Prophet frames the modelling problem inevitably leads to the problem of out-of-distribution generalization. All your future t’s will lie outside your training domain by design.</li>
+<li><strong>Variance is presumed to be constant</strong>. Related to 1. - if random shocks have impact on the future, variance - as a measure of uncertainty - should grow as we are forecasting further ahead.</li>
+</ol>
+<p>As a general rule of thumb: If the forecast intervals of your model do not grow over time, something is likely wrong with it. Unless you know exactly what you are doing, you should consider an alternative.</p>
+</section>
+<section id="facebook-prophet-underperforms-against-a-toy-benchmark" class="level2">
+<h2 class="anchored" data-anchor-id="facebook-prophet-underperforms-against-a-toy-benchmark">Facebook Prophet underperforms against a toy benchmark</h2>
+<p>To exemplify the above, I ran a pretty simple forecasting benchmark on German economic data. While the example is a little artificial and too small to generalize, the implications should be clear.</p>
+<p>I used the following dataset: Retail sale in non-specialised stores (ex. food) - Jan 2012 - May 2022 (monthly; available [here]). The train set consists of all data from Jan 2021 to Dec 2019; the test set uses all data from Jan 2020 - May 2022:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> date</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_excel(<span class="st">"../data/45212-0004.xlsx"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> df.iloc[<span class="dv">804</span>:<span class="dv">937</span>,<span class="dv">2</span>].replace(<span class="st">"..."</span>,np.nan).dropna()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat([pd.Series(pd.date_range(date(<span class="dv">2012</span>,<span class="dv">1</span>,<span class="dv">1</span>),date(<span class="dv">2022</span>,<span class="dv">6</span>,<span class="dv">1</span>),freq<span class="op">=</span><span class="st">"M"</span>)),ts.reset_index(drop<span class="op">=</span><span class="va">True</span>)],<span class="dv">1</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> [<span class="st">"ds"</span>,<span class="st">"y"</span>]</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>df.index <span class="op">=</span> df[<span class="st">"ds"</span>]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>df_train <span class="op">=</span> df.iloc[:<span class="dv">96</span>,:]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>df_test <span class="op">=</span> df.iloc[<span class="dv">96</span>:,:]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">14</span>,<span class="dv">8</span>))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>plt.plot(df_train[<span class="st">"y"</span>], label <span class="op">=</span> <span class="st">"Train"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>plt.plot(df_test[<span class="st">"y"</span>], label <span class="op">=</span> <span class="st">"Test"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Germany, Retail sale in non-specialised stores (ex. food) - Jan 2012 - May 2022"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/var/folders/2d/hl2cr85d2pb2kfbmsng3267c0000gn/T/ipykernel_63305/4068186796.py:9: FutureWarning: In a future version of pandas all arguments of concat except for the argument 'objs' will be keyword-only.
+  df = pd.concat([pd.Series(pd.date_range(date(2012,1,1),date(2022,6,1),freq="M")),ts.reset_index(drop=True)],1)</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>Text(0.5, 1.0, 'Germany, Retail sale in non-specialised stores (ex. food) - Jan 2012 - May 2022')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="facebook-prophet-covid-and-why-i-dont-trust-the-prophet_files/figure-html/cell-2-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<p>A reasonable forecasting model should be able to anticipate at least the possibility of random shocks. This would usually be visible by increasing forecast intervals. After all, the further we look ahead, the more opportunities for high impact events.</p>
+<p>In this case, the time-series does not go completely bonkers after the shock from Corona. Thus, Facebook Prophet should not struggle too much here. Let’s see how it does:</p>
+<section id="a-simple-prophet-forecast" class="level3">
+<h3 class="anchored" data-anchor-id="a-simple-prophet-forecast">A simple Prophet forecast</h3>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> prophet <span class="im">import</span> Prophet</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> Prophet()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>m.fit(df_train)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>prph_pred <span class="op">=</span> m.predict(df_test)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">14</span>,<span class="dv">8</span>))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.plot(df_train[<span class="st">"y"</span>], label <span class="op">=</span> <span class="st">"Train"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>plt.plot(df_test[<span class="st">"y"</span>], label <span class="op">=</span> <span class="st">"Test"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Germany, Retail sale in non-specialised stores (ex. food) - Jan 2012 - May 2022"</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>plt.plot(df_test.index,prph_pred[<span class="st">"yhat"</span>],label <span class="op">=</span> <span class="st">"Prophet Forecast"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>plt.fill_between(df_test.index,prph_pred[<span class="st">"yhat_lower"</span>],prph_pred[<span class="st">"yhat_upper"</span>],alpha<span class="op">=</span><span class="fl">0.3</span>,color<span class="op">=</span><span class="st">"green"</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>18:21:49 - cmdstanpy - INFO - Chain [1] start processing
+18:21:50 - cmdstanpy - INFO - Chain [1] done processing</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>&lt;matplotlib.legend.Legend at 0x125370fa0&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="facebook-prophet-covid-and-why-i-dont-trust-the-prophet_files/figure-html/cell-3-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<p>For the mean forecast Prophet was able to reasonably predict out-of-sample - at least to some extent. The forecast intervals, however, are completely ludicrous. Our model simply took roughly the residuals from the in-sample data and projected their intervals into the future.</p>
+<p>This clearly shows that Facebook Prophet did not really learn the inherent dynamics but merely a function of time. If the impact of Covid on the underlying dynamics were worse, we would likely not even see reasonable point forecasts either. I am sure that there are many data scientists out there where this was exactly the case.</p>
+</section>
+<section id="an-even-simpler-forecast-model" class="level3">
+<h3 class="anchored" data-anchor-id="an-even-simpler-forecast-model">An even simpler forecast model</h3>
+<p>As you might have heard by now, Prophet does not learn anything about the underlying system dynamics. Thus, our goal is to now create a competitor that is <strong>a)</strong> very simple and <strong>b)</strong> capable of actually modelling the dynamics.</p>
+<p>From the time-series plot, we see that there is a clear yearly seasonality. After removing that via <a href="https://faculty.fuqua.duke.edu/~rnau/Decision411_2007/Class10notes.htm?ref=sarem-seitz.com">seasonal differencing</a>, I saw that there was a <a href="https://en.wikipedia.org/wiki/Order_of_integration?ref=sarem-seitz.com#:~:text=A%20time%20series%20is%20integrated,times%20yields%20a%20stationary%20process.">remaining integration component</a> that I removed via another round of first-order differencing.</p>
+<p>Obviously, this is not a full diagnostic but sufficient for our simple toy example. Also, since the time-series is non-negative, I initially transformed it by taking the square-root. This ensures that the re-transformed series will be non-negative as well.</p>
+<p>All the above leads us to the following, relatively simple model: <span class="math display">\[
+\Delta \Delta_{12} \sqrt{y_t} \sim p(\epsilon)
+\]</span> In summary, we assume that, after ‘square-rooting’ and differencing, only a noise term remains. Here, we even assume that the noise distribution stays constant over time. A more sophisticated model should obviously check for time-varying noise.</p>
+<p>The only thing that our model now needs to learn is the distribution of the noise. Afterwards, we draw noise samples and re-integrate (i.e.&nbsp;re-transform the differencing operations). Finally, we estimate point and interval forecasts.</p>
+<p>To learn the noise distribution, I used scipy’s <code>gaussian_kde</code> function. This fits a <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation?ref=sarem-seitz.com">Gaussian kernel density</a> estimator to the data. We can then use this estimate to draw noise samples:</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> gaussian_kde</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#reverting the order of differencing yields the same result but makes re-transformation easier</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>diffed <span class="op">=</span> np.sqrt(df_train[<span class="st">"y"</span>]).diff().dropna()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>diffed_s <span class="op">=</span> diffed.diff(<span class="dv">12</span>).dropna()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">10</span>,<span class="dv">8</span>))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.hist(diffed_s,bins<span class="op">=</span><span class="dv">20</span>,density <span class="op">=</span> <span class="va">True</span>,alpha<span class="op">=</span><span class="fl">0.5</span>, label <span class="op">=</span> <span class="st">"Histogram of diffed time-series"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>kde <span class="op">=</span> gaussian_kde(diffed_s)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>target_range <span class="op">=</span> np.linspace(np.<span class="bu">min</span>(diffed_s)<span class="op">-</span><span class="fl">0.5</span>,np.<span class="bu">max</span>(diffed_s)<span class="op">+</span><span class="fl">0.5</span>,num<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>plt.plot(target_range, kde.pdf(target_range),color<span class="op">=</span><span class="st">"green"</span>,lw<span class="op">=</span><span class="dv">3</span>, label <span class="op">=</span> <span class="st">"Gaussian Kernel Density of diffed time-series"</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>&lt;matplotlib.legend.Legend at 0x125370c10&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="facebook-prophet-covid-and-why-i-dont-trust-the-prophet_files/figure-html/cell-4-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Next, we draw samples and re-transform them into a forecast of our original time-series:</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">321</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>full_sample <span class="op">=</span> [] </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10000</span>):</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    draw <span class="op">=</span> kde.resample(<span class="bu">len</span>(df_test)).reshape(<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> <span class="bu">list</span>(diffed.iloc[<span class="op">-</span><span class="dv">12</span>:].values)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(df_test)):</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        result.append(result[t]<span class="op">+</span>draw[t])</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    full_sample.append(np.array((np.sqrt(df_train.iloc[<span class="op">-</span><span class="dv">1</span>][<span class="st">"y"</span>])<span class="op">+</span>np.cumsum(result[<span class="dv">12</span>:]))).reshape(<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>reshaped <span class="op">=</span> np.concatenate(full_sample,<span class="dv">1</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>result_mean <span class="op">=</span> np.mean(reshaped,<span class="dv">1</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>lower <span class="op">=</span> np.quantile(reshaped,<span class="fl">0.05</span>,<span class="dv">1</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>upper <span class="op">=</span> np.quantile(reshaped,<span class="fl">0.95</span>,<span class="dv">1</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">14</span>,<span class="dv">8</span>))</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>plt.plot(df_train[<span class="st">"y"</span>], label <span class="op">=</span> <span class="st">"Train"</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>plt.plot(df_test[<span class="st">"y"</span>], label <span class="op">=</span> <span class="st">"Test"</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Germany, Retail sale in non-specialised stores (ex. food) - Jan 2012 - May 2022 + Forecast"</span>)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>plt.plot(df_test.index, result_mean,label <span class="op">=</span> <span class="st">"Toy model forecast"</span>,color<span class="op">=</span><span class="st">"blue"</span>)</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>plt.fill_between(df_test.index,lower,upper,alpha<span class="op">=</span><span class="fl">0.3</span>,color<span class="op">=</span><span class="st">"blue"</span>)</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>&lt;matplotlib.legend.Legend at 0x1367f6a40&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="facebook-prophet-covid-and-why-i-dont-trust-the-prophet_files/figure-html/cell-5-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Especially the forecast interval makes much more sense than for Facebook Prophet. As desired, the forecast intervals grow larger over time which implies increasing uncertainty.</p>
+<p>Let us also do a side-by-side comparison:</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">14</span>,<span class="dv">8</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>plt.plot(df_train[<span class="st">"y"</span>], label <span class="op">=</span> <span class="st">"Train"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>plt.plot(df_test[<span class="st">"y"</span>], label <span class="op">=</span> <span class="st">"Test"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Germany, Retail sale in non-specialised stores (ex. food) - Jan 2012 - May 2022 + Forecast"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>plt.plot(df_test.index, result_mean,label <span class="op">=</span> <span class="st">"Toy model forecast"</span>,color<span class="op">=</span><span class="st">"blue"</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>plt.fill_between(df_test.index,lower,upper,alpha<span class="op">=</span><span class="fl">0.3</span>,color<span class="op">=</span><span class="st">"blue"</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>plt.plot(df_test.index,prph_pred[<span class="st">"yhat"</span>],label <span class="op">=</span> <span class="st">"Prophet Forecast"</span>,color<span class="op">=</span><span class="st">"green"</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>&lt;matplotlib.legend.Legend at 0x13b984970&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="facebook-prophet-covid-and-why-i-dont-trust-the-prophet_files/figure-html/cell-6-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We can also calculate the RMSE for both mean forecasts:</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>rmse_simple <span class="op">=</span> np.sqrt(np.mean((result_mean<span class="op">-</span>df_test[<span class="st">"y"</span>].values)<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>rmse_prophet <span class="op">=</span> np.sqrt(np.mean((prph_pred[<span class="st">"yhat"</span>].values[<span class="op">-</span><span class="bu">len</span>(df_test):]<span class="op">-</span>df_test[<span class="st">"y"</span>].values)<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Simple Model: </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(rmse_simple))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Prophet: </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(rmse_prophet))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple Model: 20.745456460849358
+Prophet: 22.49447614293072</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="takeaways-for-the-dedicated-prophet-user" class="level2">
+<h2 class="anchored" data-anchor-id="takeaways-for-the-dedicated-prophet-user">Takeaways for the dedicated Prophet user</h2>
+<p>The question is, what do we make out of this? Clearly, the large, long-term user-base of Facebook Prophet indicates that people are getting some value from it. Also, Facebook/Meta employs some very bright people - it’s highly unlikely that they would produce a completely useless library.</p>
+<p>Going back to our initial considerations, we can deduce the following:</p>
+<p>Prophet should work fine as long as it correctly depicts the conditional mean and the conditional variance. Mathematically,</p>
+<p><span class="math display">\[
+\begin{gathered}
+m_{\text {prophet }}(t+h) \approx \mathbb{E}\left[y_{t+h} \mid y_t, \ldots, y_1\right] \\
+v_{\text {prophet }}(t+h)=\sigma^2 \approx \mathbb{V} \operatorname{Vr}\left[y_{t+h} \mid y_t, \ldots, y_1\right]
+\end{gathered}
+\]</span> for all forecast periods <span class="math inline">\(t+h\)</span>.</p>
+<p>This could be the case when the underlying system is in a nice, equilibrium, e.g.&nbsp;when the economy is in a non-volatile state. However, as soon as there is a large shock, the variance requirement is almost certain to be broken. This is exactly what we saw in the example time-series above.</p>
+<p>Thus, should you drop Prophet altogether? If the results are good <strong>and</strong> if your forecasts going completely nuts does not have a large negative impact, I’d argue that you should keep it. Never change a running system, at least not over night.</p>
+<p>If you are heavily dependent on a model that can randomly break at any time, though, you might want to start looking for alternatives.</p>
+<p>Another use-case where Facebook Prophet makes more sense in my opinion, is outlier and change point detection. If you are simply interested in deviations from the expected trajectory, prophet can score you some quick and easy wins. As soon as forecast quality becomes a thing, however, you should be careful.</p>
+<p>Will [Neural Prophet], a.k.a. Facebook Prophet 2.0, make things better? At least their Deep-AR module now considers past realizations to predict the future. On the other hand, Neural Prophet still makes heavy use of curve fitting. Thus, you should be wary of the Prophet upgrade, too.</p>
+<p>If you decide that you are going to use either of the Prophets, I recommend benchmarking against trivial alternatives. When a simple but theoretically more sound model - as in our example - performs comparably, you might want to reconsider your choice.</p>
+</section>
+<section id="alternatives-to-facebook-prophet" class="level2">
+<h2 class="anchored" data-anchor-id="alternatives-to-facebook-prophet">Alternatives to Facebook Prophet</h2>
+<p>No mini-rant without trying to offer a solution. On the one hand, these alternatives will require more manual work to find a suitable model. On the other hand, chances are good that the product will be more robust than a convenient Prophet().fit().</p>
+<ul>
+<li><a href="https://facebookresearch.github.io/Kats/?ref=sarem-seitz.com">Kats</a>: While Kats is a broad library for general time-series analysis, it offers some endpoints for forecasting as well. Just like Prophet, it has also been open sources by Facebook/Meta.</li>
+<li><a href="https://unit8co.github.io/darts/?ref=sarem-seitz.com#">Darts</a>: Specifically aimed at forecasting problems. Darts provides support for a variety of modelling options.</li>
+<li><a href="https://tsfresh.readthedocs.io/en/latest/?ref=sarem-seitz.com#">tsfresh</a>: This package only creates a large set of time-series summary statistics for you. Then, you can use those features as predictors in a custom forecasting model. Pretty flexible, but also more manual work.</li>
+</ul>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Despite its popularity, Facebook Prophet contains some serious theoretical issues. These flaws can easily render its forecasts useless. On the one hand, Prophet makes building forecast models at scale more or less a breeze. This convenience, however, comes at the cost of a fair amount of unreliability.</p>
+<p>To summarize all the above: As long as you expect your time-series to remain somewhat stable, Prophet can be a helpful plug-and-play solution. However, don’t get fooled by Prophet being right many times. Worst case, you ultimately go bust when it suddenly isn’t anymore.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
