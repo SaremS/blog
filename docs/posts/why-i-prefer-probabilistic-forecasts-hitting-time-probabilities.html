@@ -247,12 +247,9 @@ p_{\tau_A}(T)=P\left(\tau_A=T\right)
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.plot(y,label <span class="op">=</span> <span class="st">"#Passengers"</span>)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"AirPassengers.csv"</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="1">
-<pre><code>&lt;matplotlib.legend.Legend at 0x11cdfe050&gt;</code></pre>
-</div>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="why-i-prefer-probabilistic-forecasts-hitting-time-probabilities_files/figure-html/cell-2-output-2.png" class="img-fluid"></p>
+<p><img src="why-i-prefer-probabilistic-forecasts-hitting-time-probabilities_files/figure-html/cell-2-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>While the data is heavily outdated, it is simplistic enough to help us make a point quickly.</p>
@@ -267,73 +264,37 @@ p_{\tau_A}(T)=P\left(\tau_A=T\right)
 <li>Mark the timestamp where the forecast exceeds the threshold for the first time as your hitting time.</li>
 </ol>
 <p>With <code>statsmodels.tsa.sarimax.SARIMAX</code>, this looks as follows:</p>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.tsa.statespace.sarimax <span class="im">import</span> SARIMAX</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> y.iloc[:<span class="op">-</span><span class="dv">36</span>]</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> y.iloc[<span class="op">-</span><span class="dv">36</span>:]</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> SARIMAX(endog <span class="op">=</span> y_train,order <span class="op">=</span> (<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),seasonal_order<span class="op">=</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">12</span>)).fit()</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>point_forecast <span class="op">=</span> model.forecast(<span class="dv">36</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>,<span class="dv">6</span>))</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>plt.plot(y_test, label<span class="op">=</span><span class="st">"Out-of-sample data"</span>)</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>plt.plot(point_forecast, label<span class="op">=</span><span class="st">"SARIMAX point forecast"</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>plt.axvline(point_forecast.index[np.argmax(point_forecast<span class="op">&gt;=</span><span class="dv">550</span>)], color<span class="op">=</span><span class="st">"red"</span>, label<span class="op">=</span><span class="st">"Point forecast hitting time"</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Hitting time via point forecast"</span>)</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>RUNNING THE L-BFGS-B CODE
-
-           * * *
-
-Machine precision = 2.220D-16
- N =            3     M =           10
-
-At X0         0 variables are exactly at the bounds
-
-At iterate    0    f=  3.23684D+00    |proj g|=  6.35325D-03
-
-At iterate    5    f=  3.23656D+00    |proj g|=  7.06801D-03
-
-At iterate   10    f=  3.23649D+00    |proj g|=  5.56724D-05
-
-           * * *
-
-Tit   = total number of iterations
-Tnf   = total number of function evaluations
-Tnint = total number of segments explored during Cauchy searches
-Skip  = number of BFGS updates skipped
-Nact  = number of active bounds at final generalized Cauchy point
-Projg = norm of the final projected gradient
-F     = final function value
-
-           * * *
-
-   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
-    3     11     13      1     0     0   8.454D-06   3.236D+00
-  F =   3.2364869300612065     
-
-CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL            </code></pre>
-</div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.tsa.statespace.sarimax <span class="im">import</span> SARIMAX</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> y.iloc[:<span class="op">-</span><span class="dv">36</span>]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> y.iloc[<span class="op">-</span><span class="dv">36</span>:]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> SARIMAX(endog <span class="op">=</span> y_train,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                order <span class="op">=</span> (<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                seasonal_order<span class="op">=</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">12</span>)).fit(disp<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>point_forecast <span class="op">=</span> model.forecast(<span class="dv">36</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>,<span class="dv">6</span>))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>plt.plot(y_test, label<span class="op">=</span><span class="st">"Out-of-sample data"</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>plt.plot(point_forecast, label<span class="op">=</span><span class="st">"SARIMAX point forecast"</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>plt.axvline(point_forecast.index[np.argmax(point_forecast<span class="op">&gt;=</span><span class="dv">550</span>)], color<span class="op">=</span><span class="st">"red"</span>, label<span class="op">=</span><span class="st">"Point forecast hitting time"</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Hitting time via point forecast"</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/statsmodels/tsa/base/tsa_model.py:471: ValueWarning: No frequency information was provided, so inferred frequency MS will be used.
   self._init_dates(dates, freq)
 /Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/statsmodels/tsa/base/tsa_model.py:471: ValueWarning: No frequency information was provided, so inferred frequency MS will be used.
-  self._init_dates(dates, freq)
- This problem is unconstrained.</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>&lt;matplotlib.legend.Legend at 0x131de31f0&gt;</code></pre>
+  self._init_dates(dates, freq)</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="why-i-prefer-probabilistic-forecasts-hitting-time-probabilities_files/figure-html/cell-3-output-4.png" class="img-fluid"></p>
+<p><img src="why-i-prefer-probabilistic-forecasts-hitting-time-probabilities_files/figure-html/cell-3-output-2.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Looking at the out-of-sample set in hindsight, we see that our hitting time forecast was one year late. In a real-world application, being one year late could be arbitrarily bad for your business case.</p>
@@ -342,52 +303,46 @@ CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL            </code></pre>
 <section id="monte-carlo-estimation-of-hitting-time-probabilities" class="level3">
 <h3 class="anchored" data-anchor-id="monte-carlo-estimation-of-hitting-time-probabilities">Monte-Carlo estimation of hitting time probabilities</h3>
 <p>Luckily, <code>statsmodels</code>’ SARIMAX provides both mean and standard deviation forecasts. As the forecast distribution is Gaussian, we can use that knowledge for a <a href="https://en.wikipedia.org/wiki/Monte_Carlo_method?ref=sarem-seitz.com">Monte-Carlo simulation</a>. From there, we can estimate the probability for each month being the hitting time for <code>C=550</code>:</p>
-<div class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>means <span class="op">=</span> model.get_forecast(<span class="dv">100</span>).predicted_mean</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>stds <span class="op">=</span> model.get_forecast(<span class="dv">100</span>).se_mean</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">123</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>hits <span class="op">=</span> [np.argmax(norm(means,stds).rvs()<span class="op">&gt;=</span><span class="dv">550</span>) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10000</span>)]</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>hit_dates <span class="op">=</span> [means.index[hit] <span class="cf">for</span> hit <span class="kw">in</span> hits]</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>probs <span class="op">=</span> pd.Series(hit_dates).value_counts()<span class="op">/</span><span class="dv">10000</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>,<span class="dv">6</span>))</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>plt.bar(probs.index, probs.values,width<span class="op">=</span><span class="dv">12</span>, label <span class="op">=</span> <span class="st">"Forecasted hitting time probabilities"</span>)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>plt.axvline(means.index[<span class="bu">int</span>(np.mean(hits))], color<span class="op">=</span><span class="st">"purple"</span>,label <span class="op">=</span> <span class="st">"Approx. mean hitting time"</span>, lw<span class="op">=</span><span class="dv">4</span>, ls<span class="op">=</span><span class="st">"dashed"</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>plt.axvline(means.index[np.argmax(model.forecast(<span class="dv">36</span>)<span class="op">&gt;=</span><span class="dv">550</span>)],color<span class="op">=</span><span class="st">"red"</span>, label <span class="op">=</span> <span class="st">"Point forecast hitting time"</span>, lw<span class="op">=</span><span class="dv">4</span>, ls<span class="op">=</span><span class="st">"dashed"</span>)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>plt.axvline(means.index[np.argmax(y_test<span class="op">&gt;=</span><span class="dv">550</span>)],color<span class="op">=</span><span class="st">"green"</span>, label <span class="op">=</span> <span class="st">"Actual hitting time (y&gt;=550)"</span>, lw<span class="op">=</span><span class="dv">4</span>, ls<span class="op">=</span><span class="st">"dashed"</span>)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Hitting time probabilities via probabilistic forecast"</span>)</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="19">
-<pre><code>&lt;matplotlib.legend.Legend at 0x13789b9d0&gt;</code></pre>
-</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>means <span class="op">=</span> model.get_forecast(<span class="dv">100</span>).predicted_mean</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>stds <span class="op">=</span> model.get_forecast(<span class="dv">100</span>).se_mean</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">123</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>hits <span class="op">=</span> [np.argmax(norm(means,stds).rvs()<span class="op">&gt;=</span><span class="dv">550</span>) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10000</span>)]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>hit_dates <span class="op">=</span> [means.index[hit] <span class="cf">for</span> hit <span class="kw">in</span> hits]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>probs <span class="op">=</span> pd.Series(hit_dates).value_counts()<span class="op">/</span><span class="dv">10000</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>,<span class="dv">6</span>))</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>plt.bar(probs.index, probs.values,width<span class="op">=</span><span class="dv">12</span>, label <span class="op">=</span> <span class="st">"Forecasted hitting time probabilities"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>plt.axvline(means.index[<span class="bu">int</span>(np.mean(hits))], color<span class="op">=</span><span class="st">"purple"</span>,label <span class="op">=</span> <span class="st">"Approx. mean hitting time"</span>, lw<span class="op">=</span><span class="dv">4</span>, ls<span class="op">=</span><span class="st">"dashed"</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>plt.axvline(means.index[np.argmax(model.forecast(<span class="dv">36</span>)<span class="op">&gt;=</span><span class="dv">550</span>)],color<span class="op">=</span><span class="st">"red"</span>, label <span class="op">=</span> <span class="st">"Point forecast hitting time"</span>, lw<span class="op">=</span><span class="dv">4</span>, ls<span class="op">=</span><span class="st">"dashed"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>plt.axvline(means.index[np.argmax(y_test<span class="op">&gt;=</span><span class="dv">550</span>)],color<span class="op">=</span><span class="st">"green"</span>, label <span class="op">=</span> <span class="st">"Actual hitting time (y&gt;=550)"</span>, lw<span class="op">=</span><span class="dv">4</span>, ls<span class="op">=</span><span class="st">"dashed"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Hitting time probabilities via probabilistic forecast"</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="why-i-prefer-probabilistic-forecasts-hitting-time-probabilities_files/figure-html/cell-4-output-2.png" class="img-fluid"></p>
+<p><img src="why-i-prefer-probabilistic-forecasts-hitting-time-probabilities_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>This looks much better. Our model predicts that the time-series will is most likely to exceed the threshold one year before the point forecast prediction. The hindsight data also agrees much better with this prediction.</p>
 <p>Additionally, we see that the point forecast hitting time (red line) is not the expectation (purple line) of the probabilistic variant either. This is significant in so far as the point forecast of the actual time-series is in fact the mean of the probabilistic forecast.</p>
 <p>Due to the underlying dynamic of SARIMAX, however, this does not translate to the mean hitting time.</p>
 <p>Finally, let us look at the Cumulative Distribution Function of our mass function estimate:</p>
-<div class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>,<span class="dv">6</span>))</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>plt.plot(probs.sort_index().cumsum(), lw<span class="op">=</span><span class="dv">3</span>, label<span class="op">=</span><span class="st">"Hitting time probability c.d.f."</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Cumulative distribution of hitting time probabilities"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
-<pre><code>Text(0.5, 1.0, 'Cumulative distribution of hitting time probabilities')</code></pre>
-</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>,<span class="dv">6</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plt.plot(probs.sort_index().cumsum(), lw<span class="op">=</span><span class="dv">3</span>, label<span class="op">=</span><span class="st">"Hitting time probability c.d.f."</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Cumulative distribution of hitting time probabilities"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="why-i-prefer-probabilistic-forecasts-hitting-time-probabilities_files/figure-html/cell-5-output-2.png" class="img-fluid"></p>
+<p><img src="why-i-prefer-probabilistic-forecasts-hitting-time-probabilities_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Here, the probability of threshold exceedance is already beyond 60% by the second year and not the third. Another reason why the point forecast hitting time is inappropriate.</p>

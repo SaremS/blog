@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/when-point-forecasts-are-completely-useless.html",
       "/posts/why-i-prefer-probabilistic-forecasts-hitting-time-probabilities.html",
       "/posts/random-forests-and-boosting-for-arch-like-volatility-forecasts.html",
       "/posts/forecasting-with-decision-trees-and-random-forests.html",

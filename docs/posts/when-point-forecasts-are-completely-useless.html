@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sarem">
+<meta name="dcterms.date" content="2023-01-01">
+
+<title>blog - When Point Forecasts Are Completely Useless</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">When Point Forecasts Are Completely Useless</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Time Series</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sarem </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 1, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#two-examples-of-point-forecast-failure" id="toc-two-examples-of-point-forecast-failure" class="nav-link" data-scroll-target="#two-examples-of-point-forecast-failure">Two examples of point forecast failure</a></li>
+  <li><a href="#what-has-gone-wrong-with-our-point-forecasts" id="toc-what-has-gone-wrong-with-our-point-forecasts" class="nav-link" data-scroll-target="#what-has-gone-wrong-with-our-point-forecasts">What has gone wrong with our point forecasts?</a></li>
+  <li><a href="#what-can-we-do" id="toc-what-can-we-do" class="nav-link" data-scroll-target="#what-can-we-do">What can we do?</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p><a href="https://www.sarem-seitz.com/why-i-prefer-probabilistic-forecasts-hitting-time-probabilities/">In the last article</a>, we discussed one advantage of probabilistic forecasts over point forecasts - namely, handling time-to-exceedance problems. In this post, we will examine another limitation of point forecasts: Higher order statistical properties.</p>
+<p>The ideas will be very familiar to those with a background in mathematics or statistics. Readers without formal training in either will therefore probably benefit the most from this article.</p>
+<p>By the end of this post, you’ll have a better idea of how higher order statistical properties can impact the performance of your forecasts. In particular, we will see how point forecasts can actually completely fail without further adjustment.</p>
+</section>
+<section id="two-examples-of-point-forecast-failure" class="level2">
+<h2 class="anchored" data-anchor-id="two-examples-of-point-forecast-failure">Two examples of point forecast failure</h2>
+<p>To sensitize you for the issues of point forecasts, let us continue with two very simple examples. Both time-series admit to a pretty simple, auto-regressive data generating process.</p>
+<p>We will generate enough data for an auto-regressive Gradient Boosting model to be sensible. Thus, we avoid both using a model that is too inflexible and overfitting due to a lack of data.</p>
+<section id="example-1---auto-regressive-variance-garch" class="level3">
+<h3 class="anchored" data-anchor-id="example-1---auto-regressive-variance-garch">Example 1 - Auto-regressive variance (GARCH)</h3>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">987</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>time_series <span class="op">=</span> [np.random.normal()<span class="op">*</span><span class="fl">0.1</span>, np.random.normal()<span class="op">*</span><span class="fl">0.1</span>]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sigs <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.1</span>]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2000</span>):</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    sig_t <span class="op">=</span> np.sqrt(<span class="fl">0.1</span> <span class="op">+</span> <span class="fl">0.24</span><span class="op">*</span>time_series[<span class="op">-</span><span class="dv">1</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="fl">0.24</span><span class="op">*</span>time_series[<span class="op">-</span><span class="dv">2</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="fl">0.24</span><span class="op">*</span>sigs[<span class="op">-</span><span class="dv">1</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="fl">0.24</span><span class="op">*</span>sigs[<span class="op">-</span><span class="dv">2</span>]<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    y_t <span class="op">=</span> np.random.normal() <span class="op">*</span> sig_t</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    time_series.append(y_t)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    sigs.append(sig_t)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array(time_series[<span class="dv">2</span>:])</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">16</span>,<span class="dv">8</span>))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>plt.plot(y, label <span class="op">=</span> <span class="st">"Simulated Time-Series"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize <span class="op">=</span> <span class="dv">18</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="when-point-forecasts-are-completely-useless_files/figure-html/cell-2-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>This is a standard <a href="https://en.wikipedia.org/wiki/Autoregressive_conditional_heteroskedasticity?ref=sarem-seitz.com">GARCH</a> time-series as they are frequently encountered in econometrics. If you want to get some ideas on how you can handle such data, I have also written a few articles:</p>
+<ul>
+<li><a href="https://www.sarem-seitz.com/random-forests-and-boosting-for-arch-like-volatility-forecasts/">Random Forests and Boosting for ARCH-like volatility forecasts</a></li>
+<li><a href="https://www.sarem-seitz.com/multivariate-garch-with-python-and-tensorflow/">Multivariate GARCH with Python and Tensorflow</a></li>
+<li><a href="https://www.sarem-seitz.com/lets-make-garch-more-flexible-with-normalizing-flows/">Let’s make GARCH more flexible with Normalizing Flows</a></li>
+</ul>
+<p>Anyway, let us use the cookie cutter approach of Machine Learning for time-series for now. Namely, we use <a href="https://github.com/Nixtla/mlforecast?ref=sarem-seitz.com">Nixtla’s mlforecast package</a> to build an auto-regressive Boosting model for us. (This is not meant to bash on the Nixtla package. In fact, it is really helpful and convenient if you know what you are doing.)</p>
+<p>The results look as follows:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mlforecast.utils <span class="im">import</span> generate_daily_series</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> GradientBoostingRegressor</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mlforecast <span class="im">import</span> MLForecast</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">987</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> y[:<span class="dv">1800</span>]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> y[<span class="dv">1800</span>:]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> generate_daily_series(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    n_series<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    max_length<span class="op">=</span><span class="dv">10000</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>).iloc[:<span class="dv">1800</span>,:]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>series[<span class="st">"y"</span>] <span class="op">=</span> y_train</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> [</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    GradientBoostingRegressor(),</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>fcst <span class="op">=</span> MLForecast(</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    models<span class="op">=</span>models,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    freq<span class="op">=</span><span class="st">'D'</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    lags<span class="op">=</span>[<span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>fcst.fit(series, id_col<span class="op">=</span><span class="st">'index'</span>, time_col<span class="op">=</span><span class="st">'ds'</span>, target_col<span class="op">=</span><span class="st">'y'</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> fcst.predict(<span class="dv">200</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">16</span>,<span class="dv">8</span>))</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>plt.plot(y_test, label <span class="op">=</span> <span class="st">"Test set"</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>plt.plot(predictions.iloc[:,<span class="dv">1</span>].values, label <span class="op">=</span> <span class="st">"Gradient Boosting forecast"</span>, lw<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize <span class="op">=</span> <span class="dv">18</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="when-point-forecasts-are-completely-useless_files/figure-html/cell-3-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Unfortunately, the result does not help at all. Although we have provided the actual ground-truth number of lags, the forecast is practically useless.</p>
+</section>
+<section id="example-2---auto-regressive-non-gaussian-data" class="level3">
+<h3 class="anchored" data-anchor-id="example-2---auto-regressive-non-gaussian-data">Example 2 - Auto-regressive, non-Gaussian data</h3>
+<p>This next example follows a more cooked up data generating process. Nevertheless, this doesn’t preclude some real-world time-series following a similar logic, too:</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> beta</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">321</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>time_series <span class="op">=</span> [beta(<span class="fl">0.5</span>,<span class="dv">10</span>).rvs()]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2000</span>):</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    alpha_t <span class="op">=</span> <span class="fl">0.5</span> <span class="op">+</span> time_series[<span class="op">-</span><span class="dv">1</span>] <span class="op">*</span> <span class="fl">0.025</span> <span class="op">*</span> t</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    beta_t <span class="op">=</span> alpha_t <span class="op">*</span> <span class="dv">20</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    y_t <span class="op">=</span> beta(alpha_t, beta_t).rvs()</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    time_series.append(y_t)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array(time_series[<span class="dv">1</span>:])</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">16</span>,<span class="dv">8</span>))</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>plt.plot(y, label <span class="op">=</span> <span class="st">"Simulated Time-Series"</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize <span class="op">=</span> <span class="dv">18</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="when-point-forecasts-are-completely-useless_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Let us check how a Gradient Boosting model performs for this case:</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mlforecast.utils <span class="im">import</span> generate_daily_series</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> GradientBoostingRegressor</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mlforecast <span class="im">import</span> MLForecast</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">987</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> y[:<span class="dv">1800</span>]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> y[<span class="dv">1800</span>:]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> generate_daily_series(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    n_series<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    max_length<span class="op">=</span><span class="dv">10000</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>).iloc[:<span class="dv">1800</span>,:]</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>series[<span class="st">"y"</span>] <span class="op">=</span> y_train</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> [</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    GradientBoostingRegressor(max_depth <span class="op">=</span> <span class="dv">1</span>),</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>fcst <span class="op">=</span> MLForecast(</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    models<span class="op">=</span>models,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    freq<span class="op">=</span><span class="st">'D'</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    lags<span class="op">=</span>[<span class="dv">1</span>]</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>fcst.fit(series, id_col<span class="op">=</span><span class="st">'index'</span>, time_col<span class="op">=</span><span class="st">'ds'</span>, target_col<span class="op">=</span><span class="st">'y'</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> fcst.predict(<span class="dv">200</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">16</span>,<span class="dv">8</span>))</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>plt.plot(y_test, label <span class="op">=</span> <span class="st">"Test set"</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>plt.plot(predictions.iloc[:,<span class="dv">1</span>].values, label <span class="op">=</span> <span class="st">"Gradient Boosting forecast"</span>, lw<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize <span class="op">=</span> <span class="dv">18</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="when-point-forecasts-are-completely-useless_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Again, the forecast is utterly useless.</p>
+</section>
+</section>
+<section id="what-has-gone-wrong-with-our-point-forecasts" class="level2">
+<h2 class="anchored" data-anchor-id="what-has-gone-wrong-with-our-point-forecasts">What has gone wrong with our point forecasts?</h2>
+<p>As you might know, <code>sklearn.ensemble.GradientBoostingRegressor</code> minimizes the mean-squared error (MSE) by default. The following is a well known property of MSE-minimization:</p>
+<blockquote class="blockquote">
+<p><em>A distribution’s mean minimizes its mean-squared error.</em></p>
+</blockquote>
+<p>Mathematically: <span class="math display">\[
+\begin{aligned}
+&amp; \arg \min _{\hat{f}} \mathbb{E}\left[\left(y_t-\hat{f}\left(y_{t-1}, \ldots, y_{t-s}\right)\right)^2\right] \\
+\Rightarrow &amp; \left.\hat{f}\left(y_{t-1}, \ldots, y_{t-s}\right)\right) \equiv \mathbb{E}\left[y_t \mid y_{t-1}, \ldots, y_{t-s}\right]
+\end{aligned}
+\]</span> where we presume an arbitrarily large set of admissable functions. Also, we implicitly need to assume that the conditional mean actually exists. This is reasonably likely for most well-behaved forecasting problems.</p>
+<p>Thus, both of the above models aim to forecast the mean of the conditional distribution of our observations. The issue here is that the conditional mean is actually constant by construction.</p>
+<p>This is obvious for the first example - each observation has a conditional mean of zero. For the second example, we would have to do some math for a formal proof that is left to the interested reader.</p>
+<p>Now, although the conditional mean remains constant over time, our time-series is still far from being just pure noise. Predicting the mean via MSE-minimization was rather inadequate to describe the future.</p>
+<p>We can go even further and proclaim:</p>
+<blockquote class="blockquote">
+<p><em>Even a perfect (point-) forecasting model can be useless if the forecast quantity is uninformative.</em></p>
+</blockquote>
+<p>We can visualize via plots of conditional densities against conditional means from our examples:</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">987</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>line_1 <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">250</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>time_series <span class="op">=</span> [np.random.normal()<span class="op">*</span><span class="fl">0.1</span>, np.random.normal()<span class="op">*</span><span class="fl">0.1</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>sigs <span class="op">=</span> [<span class="fl">0.1</span>, <span class="fl">0.1</span>]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>conditional_pdfs_1 <span class="op">=</span> [norm(<span class="dv">0</span>,<span class="fl">0.1</span>).pdf(line_1)]<span class="op">*</span><span class="dv">2</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>conditional_means_1 <span class="op">=</span> [<span class="fl">0.</span>, <span class="fl">0.</span>]</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2000</span>):</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    sig_t <span class="op">=</span> np.sqrt(<span class="fl">0.1</span> <span class="op">+</span> <span class="fl">0.24</span><span class="op">*</span>time_series[<span class="op">-</span><span class="dv">1</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="fl">0.24</span><span class="op">*</span>time_series[<span class="op">-</span><span class="dv">2</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="fl">0.24</span><span class="op">*</span>sigs[<span class="op">-</span><span class="dv">1</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="fl">0.24</span><span class="op">*</span>sigs[<span class="op">-</span><span class="dv">2</span>]<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    y_t <span class="op">=</span> np.random.normal() <span class="op">*</span> sig_t</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    time_series.append(y_t)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    sigs.append(sig_t)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    conditional_pdfs_1.append(norm(<span class="dv">0</span>,sig_t).pdf(line_1))</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    conditional_means_1.append(<span class="fl">0.</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>conditional_pdfs_1 <span class="op">=</span> conditional_pdfs_1[<span class="dv">2</span>:]</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>conditional_means_1 <span class="op">=</span> conditional_means_1[<span class="dv">2</span>:]</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">987</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>line_2 <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">250</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>time_series <span class="op">=</span> [beta(<span class="fl">0.5</span>,<span class="dv">10</span>).rvs()]</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>conditional_pdfs_2 <span class="op">=</span> [beta(<span class="fl">0.5</span>,<span class="dv">10</span>).pdf(line_2)]</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>conditional_means_2 <span class="op">=</span> [beta(<span class="fl">0.5</span>,<span class="dv">10</span>).mean()]</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2000</span>):</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    alpha_t <span class="op">=</span> <span class="fl">0.5</span> <span class="op">+</span> time_series[<span class="op">-</span><span class="dv">1</span>] <span class="op">*</span> <span class="fl">0.025</span> <span class="op">*</span> t</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    beta_t <span class="op">=</span> alpha_t <span class="op">*</span> <span class="dv">20</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    y_t <span class="op">=</span> beta(alpha_t, beta_t).rvs()</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    time_series.append(y_t)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    conditional_pdfs_2.append(beta(alpha_t, beta_t).pdf(line_2))</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>    conditional_means_2.append(beta(alpha_t, beta_t).mean())</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>conditional_pdfs_2 <span class="op">=</span> conditional_pdfs_2[<span class="dv">1</span>:]</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>conditional_means_2 <span class="op">=</span> conditional_means_2[<span class="dv">1</span>:]</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>_, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">2</span>, figsize <span class="op">=</span> (<span class="dv">16</span>,<span class="dv">8</span>))</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>ax1.plot(line_1, conditional_pdfs_1[<span class="dv">0</span>], label <span class="op">=</span> <span class="st">"Conditional density, t=1"</span>, lw<span class="op">=</span><span class="dv">2</span>, c<span class="op">=</span><span class="st">"red"</span>)</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>ax1.plot(line_1, conditional_pdfs_1[<span class="dv">999</span>], label <span class="op">=</span> <span class="st">"Conditioanl density, t=1000"</span>, lw<span class="op">=</span><span class="dv">2</span>, c<span class="op">=</span><span class="st">"green"</span>)</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>ax1.plot(line_1, conditional_pdfs_1[<span class="dv">1999</span>], label <span class="op">=</span> <span class="st">"Conditional density, t=2000"</span>, lw<span class="op">=</span><span class="dv">2</span>, c<span class="op">=</span><span class="st">"blue"</span>)</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>ax1.axvline([conditional_means_1[<span class="dv">0</span>]], lw<span class="op">=</span><span class="dv">3</span>, c<span class="op">=</span><span class="st">"purple"</span>, ls<span class="op">=</span><span class="st">"dashed"</span>, label <span class="op">=</span> <span class="st">"Constant, conditional mean"</span>)</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>ax1.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>ax1.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">"Example 1"</span>, fontsize <span class="op">=</span> <span class="dv">15</span>)</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>ax2.plot(line_2, conditional_pdfs_2[<span class="dv">0</span>], label <span class="op">=</span> <span class="st">"Conditional density, t=1"</span>, lw<span class="op">=</span><span class="dv">2</span>, c<span class="op">=</span><span class="st">"red"</span>)</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>ax2.plot(line_2, conditional_pdfs_2[<span class="dv">999</span>], label <span class="op">=</span> <span class="st">"Conditioanl density, t=1000"</span>, lw<span class="op">=</span><span class="dv">2</span>, c<span class="op">=</span><span class="st">"green"</span>)</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>ax2.plot(line_2, conditional_pdfs_2[<span class="dv">1999</span>], label <span class="op">=</span> <span class="st">"Conditional density, t=2000"</span>, lw<span class="op">=</span><span class="dv">2</span>, c<span class="op">=</span><span class="st">"blue"</span>)</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>ax2.axvline([conditional_means_2[<span class="dv">0</span>]], lw<span class="op">=</span><span class="dv">3</span>, c<span class="op">=</span><span class="st">"purple"</span>, ls<span class="op">=</span><span class="st">"dashed"</span>, label <span class="op">=</span> <span class="st">"Constant, conditional mean"</span>)</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>ax2.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>ax2.legend(fontsize <span class="op">=</span> <span class="dv">11</span>)</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>ax2.set_title(<span class="st">"Example 2"</span>, fontsize <span class="op">=</span> <span class="dv">15</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="when-point-forecasts-are-completely-useless_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>On the one hand, the conditional distribution is varying and can be predicted from past by construction. The conditional mean, however, is constant and does not tell us anything about the future distribution.</p>
+</section>
+<section id="what-can-we-do" class="level2">
+<h2 class="anchored" data-anchor-id="what-can-we-do">What can we do?</h2>
+<p>At first glance, the above issues paint a rather grim picture of the capabilities of raw point forecasts. As always, the situation is of course much more granular.</p>
+<p>Therefore, let us discuss a rough pathway of what to do if your point forecasts aren’t really cutting it.</p>
+<section id="assess-if-you-even-have-a-problem-at-all---point-forecasts-can-still-work" class="level3">
+<h3 class="anchored" data-anchor-id="assess-if-you-even-have-a-problem-at-all---point-forecasts-can-still-work">Assess if you even have a problem at all - point forecasts can still work</h3>
+<p>As we have just seen, point forecasts can fail miserably. Given that they are being widely used, however, indicates that they will cause trouble for your problem. Many forecasting problems can be solved reasonably well with standard approaches.</p>
+<p>Sometimes, you just need to put in a little more effort into your model. Simply using another loss function or another non-linear transformation of your features might be sufficient. Once you observe that a point forecast simply won’t cut it though, it might be time to go probabilistic.</p>
+<p>Two cases can be good indicators:</p>
+<section id="your-point-forecasts-show-little-variation-and-are-almost-constant." class="level4">
+<h4 class="anchored" data-anchor-id="your-point-forecasts-show-little-variation-and-are-almost-constant.">1) Your point forecasts show little variation and are almost constant.</h4>
+<p>Mathematically: <span class="math display">\[
+\hat{y}_t \mid y_{t-1}, \ldots y_{t-s} \approx C
+\]</span> This is what happened in our examples and should be visible in your model validation steps. As we have seen, there is no reason to conclude that something is wrong with your model or your data yet.</p>
+</section>
+<section id="occasional-large-outliers-frequently-make-your-point-forecasts-useless." class="level4">
+<h4 class="anchored" data-anchor-id="occasional-large-outliers-frequently-make-your-point-forecasts-useless.">2) Occasional, large outliers frequently make your point forecasts useless.</h4>
+<p>This issue leads us into the domain of extreme-value theory and probably deserves a blog series of its own. Hence, we will only take a brief look at what is happening here.</p>
+<p>As an exaggerated, yet illustrative example, consider the following time-series:</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> cauchy</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">987</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">16</span>,<span class="dv">8</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.plot(cauchy(np.sin(<span class="fl">0.1</span> <span class="op">*</span> np.arange(<span class="dv">250</span>)),<span class="fl">0.05</span>).rvs(), label <span class="op">=</span> <span class="st">"Noisy observations"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.plot(np.sin(<span class="fl">0.1</span> <span class="op">*</span> np.arange(<span class="dv">250</span>)), label <span class="op">=</span> <span class="st">"Theoretical sine wave"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize<span class="op">=</span><span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>&lt;matplotlib.legend.Legend at 0x13975b010&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="when-point-forecasts-are-completely-useless_files/figure-html/cell-7-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>This is nothing more than samples from a <a href="https://en.wikipedia.org/wiki/Cauchy_distribution?ref=sarem-seitz.com">Cauchy distribution</a> whose location is determined by a sine. Now, let us see how the MSE evolves with increasing sample size if our (point-) forecast was just a continuance of the underlying sine:</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">987</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> <span class="dv">250000</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>large_sample <span class="op">=</span> cauchy(np.sin(<span class="fl">0.1</span> <span class="op">*</span> np.arange(T)),<span class="fl">0.05</span>).rvs()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>optimal_point_forecast <span class="op">=</span> np.sin(<span class="fl">0.1</span> <span class="op">*</span> np.arange(T))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>running_mse <span class="op">=</span> np.cumsum((large_sample <span class="op">-</span> optimal_point_forecast)<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>np.arange(<span class="dv">1</span>,T<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">16</span>,<span class="dv">8</span>))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>plt.plot(running_mse, label <span class="op">=</span> <span class="st">"Running MSE of Cauchy-Sine forecast"</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize <span class="op">=</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>&lt;matplotlib.legend.Legend at 0x139a9f9d0&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="when-point-forecasts-are-completely-useless_files/figure-html/cell-8-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Surprisingly, the MSE doesn’t even converge after <strong>250.000</strong> (!) observations. No matter how much data you observe, your <strong>average</strong> (!) squared error keeps growing. This is a property of a certain family of probability distributions that the Cauchy is part of.</p>
+<p>You will likely never observe such a monstrosity in your day-to-day life. Almost all real-world time-series adhere to certain limitations that make an infinite MSE unlikely.</p>
+<p>Nevertheless, it would be helpful to get at least some idea of how likely you will observe large outliers. Imagine, for example, how valuable a rough probability of an extreme collapse of the tourism sector could have been in 2019.</p>
+</section>
+</section>
+<section id="adjust-your-definition-of-a-useful-forecast" class="level3">
+<h3 class="anchored" data-anchor-id="adjust-your-definition-of-a-useful-forecast">Adjust your definition of a ‘useful’ forecast</h3>
+<p>Of course it can be very difficult to convince your stakeholders of the above issues of point forecasts. For business folks, probabilistic approaches might look like unnecessary rocket science.</p>
+<p>Rather, we typically measure forecasting success by how closely predictions match future observations. If something goes wrong, just add more data and hope that you’ll be better off next time. However, consider the underlying complexity of most time-series systems. What are your chances of ever collecting all the relevant data?</p>
+<p>This is like trying to collect and process all relevant factors to predict the exact outcome of a game of roulette. While possible in theory, the sheer amount of granularity makes this impossible in practice.</p>
+<p>Nevertheless, you might discover that there are some physical flaws in the roulette table. If these flaws are skewing the odds in a certain direction, making your bets accordingly could make you a fortune in the long run.</p>
+<p>If we transfer this analogy to general forecasting problems, this leads us to a paradigm shift:</p>
+<blockquote class="blockquote">
+<p><strong>Instead of trying to predict the future as exactly as possible, forecast models should optimize our odds when betting on future outcomes. </strong></p>
+</blockquote>
+<p>Taking this betting metaphor further, we arrive at three conclusions for forecasting:</p>
+<section id="real-world-decisions-are-almost-always-made-under-uncertainty" class="level4">
+<h4 class="anchored" data-anchor-id="real-world-decisions-are-almost-always-made-under-uncertainty">1) Real-world decisions are almost always made under uncertainty</h4>
+<p>Consider the following problem:</p>
+<p>You are an ice cream vendor and want to optimize your daily inventoy. For simplicity, we presume that each day, you either</p>
+<ul>
+<li>Sell exactly <code>10</code> pounds of ice-cream with a <code>90%</code> chance or</li>
+<li>Sell <code>0</code> pounds with a <code>10%</code> chance (because the weather is really bad, you know)</li>
+</ul>
+<p>Also, presume that</p>
+<ul>
+<li>You can buy <code>1</code> pound of ice cream for <code>1</code> money at the beginning of each day</li>
+<li>Sell <code>1</code> pound for <code>1.2</code> money</li>
+<li>Your ice-cream inventory goes to zero at the end of each day (no overnight warehousing)</li>
+<li>If your total losses exceed <code>-10</code> money you are going bankrupt</li>
+</ul>
+<p>Imagine you are building a demand forecast model for that problem to decide how much ice-cream you want to sell. If you go the point-forecast + MSE route, your result would be as follows:</p>
+<p>Expected demand is <span class="math inline">\(0.9\cdot 10+0.1\cdot 0 = 9\)</span>, therefore the MSE-minimizing forecast is also 9 per day. Are you going to buy <code>9</code> pounds of ice-cream each day? What about the risk of bankruptcy if you don’t sell anything multiple times in a row?</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">16</span>,<span class="dv">8</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.stem([<span class="fl">0.</span>,<span class="fl">10.</span>], [<span class="fl">0.1</span>,<span class="fl">0.9</span>], linefmt<span class="op">=</span><span class="st">'b-'</span>, markerfmt<span class="op">=</span><span class="st">'bo'</span>, basefmt<span class="op">=</span><span class="st">'black'</span>, label <span class="op">=</span> <span class="st">"Probability Mass Function"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">9</span>,<span class="dv">9</span>],[<span class="dv">0</span>,<span class="dv">1</span>], c<span class="op">=</span><span class="st">"red"</span>, lw<span class="op">=</span><span class="dv">3</span>, ls<span class="op">=</span><span class="st">"dashed"</span>, label <span class="op">=</span> <span class="st">"Expected value / MSE-Minimizer"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Ice-cream demand in pounds"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize <span class="op">=</span> <span class="dv">12</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="when-point-forecasts-are-completely-useless_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>This is the point where uncertainty comes into play and you need to decide on how much risk you want to take. As often in life, this is another trade-off between profit and risk.</p>
+<p>Unfortunately, the point-forecast alone doesn’t account for any uncertainty.</p>
+<p>Let us now presume that we had a probabilistic forecast model that was able to predict the respective probability mass function (pmf). From here, we can derive our earnings <span class="math inline">\(R\)</span> for day <span class="math inline">\(t\)</span> as a random variable given our inventory <span class="math inline">\(x\)</span>: <span class="math display">\[
+\begin{gathered}
+R\left(x_t\right)= \begin{cases}\min \left(x_t, 10\right) \cdot 1.2-x_t &amp; \text { if } S_t=1 \\
+-x_t &amp; \text { if } S_t=0\end{cases} \\
+S_t \stackrel{i . i . d}{\sim} \mathcal{B e r}(0.9)
+\end{gathered}
+\]</span> This information could then be used in a <a href="https://en.wikipedia.org/wiki/Stochastic_programming?ref=sarem-seitz.com#:~:text=A%20stochastic%20program%20is%20an,assumed%20to%20be%20known%20exactly.">stochastic program</a>. The latter can be seen as a probabilistic extension to deterministic optimization. Here, we can also account for and optimize our risk when dealing with real-world uncertainty.</p>
+<p>In fact, real-world complexity is worlds beyond our little ice-cream example. Consider yourself what this means for the likelihood that reality will diverge from your point forecasts.</p>
+</section>
+<section id="many-small-bets-are-safer-than-a-few-large-ones" class="level4">
+<h4 class="anchored" data-anchor-id="many-small-bets-are-safer-than-a-few-large-ones">2) Many small bets are safer than a few large ones</h4>
+<p>Back to the flawed roulette table, imagine that the probability of 0 is slightly higher than expected. Would you place all your chips on 0 in a single run or place small amounts on it for many rounds?</p>
+<p>If you are unlucky, even the smallest possible bet size could lead you into bankruptcy. The chances of this happening are, nevertheless, much larger if you go all-in in a single turn. While it is beyond this article to discuss proper bet sizing, the <a href="https://en.wikipedia.org/wiki/Kelly_criterion?ref=sarem-seitz.com">Kelly criterion</a> might be a useful start.</p>
+<p>In practice, this could mean going from monthly forecasts to daily forecasts. That is of course a very simplistic recommendation. Subject to other factors, daily forecasts might still be less accurate or not useful at all. At this point, yours and your stakeholder’s expertise are necessary to find the right balance.</p>
+</section>
+<section id="sometimes-its-better-not-to-play-the-game-at-all" class="level4">
+<h4 class="anchored" data-anchor-id="sometimes-its-better-not-to-play-the-game-at-all">3) Sometimes, it’s better not to play the game at all</h4>
+<p>Let’s face it, there are always situations where you can only lose in the long run. If the signal-to noise ratio of your time-series is too low, it can be impossible to provide useful predictions.</p>
+<p>Hedge funds with very deep pockets are <a href="https://edition.cnn.com/2019/07/10/investing/hedge-fund-drones-alternative-data/index.html?ref=sarem-seitz.com">paying absurd sums of money for alternative data</a>. All that just to make their forecasts a tiny bit more accurate than that of their competitors. Unless you have access to the same data (if it is even good at all), you are unlikely to consistently outperform them on the same bets.</p>
+<p>In case you have reached this point, you might want to look for new data to improve your forecasts. If that doesn’t help either, it could even make sense to rely on respective forecasts altogether.</p>
+</section>
+</section>
+<section id="create-multiple-point-forecasts-of-relevant-summary-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="create-multiple-point-forecasts-of-relevant-summary-statistics">Create multiple point forecasts of relevant summary statistics</h3>
+<p>Instead of focusing on forecasting mean via MSE-minimzation (or median through MAE-minimization), <span class="math display">\[
+\mathbb{E}\left[Y_t \mid y_{t-1}, \ldots, y_{t-s}\right]
+\]</span> you could predict other quantities that describe your distribution.</p>
+<p>In Example 1, the most obvious would be conditional variance <span class="math display">\[
+\operatorname{Var}\left[Y_t \mid y_{t-1}, \ldots, y_{t-s}\right].
+\]</span> You can find a short overview on how to forecast conditional variance in <a href="https://www.sarem-seitz.com/random-forests-and-boosting-for-arch-like-volatility-forecasts/#:~:text=Estimating%20Variance%20directly">this article</a>.</p>
+<p>Once your model predicts a period of high variance, you could decide to play it safer. What ‘playing it safe’ means is obviously depending on the context of your forecasting problem.</p>
+<p>Example 2 might also benefit from a conditional variance forecast. However, notice that <a href="https://en.wikipedia.org/wiki/Skewness?ref=sarem-seitz.com">conditional skewness</a> is also playing a role here. One approach to deal with this situation might be a forecast of conditional quantiles, i.e. <span class="math display">\[
+\begin{gathered}
+F_{Y_t \mid y_{t-1}, \ldots y_{t-s}}^{-1}(\alpha) \\
+\alpha \in(0,1)
+\end{gathered}
+\]</span> This is known as <a href="https://en.wikipedia.org/wiki/Quantile_regression?ref=sarem-seitz.com"><strong>quantile regression</strong></a> and, e.g., sklearn’s GradientBoostingRegressor actually implements the respective loss.</p>
+<p>Which quantities you should choose will ultimately depend on your specific problem. The biggest advantage here is that you don’t make any assumptions about the underlying distribution. Rather, you just let your model ‘learn’ the important aspects of the distribution that you care about.</p>
+<p>On the other hand, it will be difficult to perform stochastic optimization with this approach. After, all you just compress the most relevant information into a several point forecasts. If you want to calculate the formally best decision given some forecast, you will therefore likely have to</p>
+</section>
+<section id="replace-your-point-forecast-by-a-probabilistic-forecast" class="level3">
+<h3 class="anchored" data-anchor-id="replace-your-point-forecast-by-a-probabilistic-forecast">Replace your point forecast by a probabilistic forecast</h3>
+<p>The most challenging but also the most holistic approach. As we saw, the success of probabilistic methods often depends on the probability distribution you choose.</p>
+<p>Technically, <a href="https://en.wikipedia.org/wiki/Nonparametric_statistics?ref=sarem-seitz.com">non-parametric</a> and ML methods can learn a probability distribution from the data, too. Keep in mind though, that time-series problems often involve much fewer observations than your typical ML use-case. As a result, these approaches can easily fall prey to overfitting here.</p>
+<p>Especially if you are a Python user, you will probably have to implement many models yourself. Contrary to R, the Python ecosystem around forecasting seems to be much more focused on point forecasts. In case you only need a SARIMAX-like solution, <code>statsmodels</code> will, however, be your friend.</p>
+<p>Below, I also summarized the three different approaches to forecasting that we have discussed so far. Keep in mind that there are advantages and disadvantages to all three.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/when-point-forecasts-are-completely-useless/forecasting_compared.png" class="img-fluid figure-img" alt="Different forecasting styles compared."></p>
+<figcaption class="figure-caption">Different forecasting styles compared.</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Hopefully, you now have a better idea of the pitfalls of point forecasts. While point forecasts are not bad per se, they just show you an incomplete picture of what is happening in an uncertain world.</p>
+<p>On the other hand, probabilistic forecasts offer a much richer perspective on the future of a given time-series. If you need a sound approach to handle the uncertainty of real-world complex systems, this is the way to go. Keep in mind, though, that this route will require more manual effort in many situations.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p><strong>[1]</strong> Hamilton, James Douglas. Time series analysis. Princeton university press, 2020.</p>
+<p><strong>[2]</strong> Hyndman, Rob J., &amp; Athanasopoulos, George. Forecasting: principles and practice. OTexts, 2018.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
