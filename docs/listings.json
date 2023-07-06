@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/random-forests-and-boosting-for-arch-like-volatility-forecasts.html",
       "/posts/forecasting-with-decision-trees-and-random-forests.html",
       "/posts/multivariate-garch-with-python-and-tensorflow.html",
       "/posts/cointegrated-time-series-and-when-difference-transformations-might-be-bad.html",
