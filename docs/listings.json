@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/winning-with-simple-not-even-linear-time-series-models.html",
       "/posts/varying-coefficient-garch.html",
       "/posts/when-point-forecasts-are-completely-useless.html",
       "/posts/why-i-prefer-probabilistic-forecasts-hitting-time-probabilities.html",
