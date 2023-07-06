@@ -3,14 +3,15 @@ project:
   output-dir: docs
 
 website:
-  title: "blog"
+  title: "Sarem Seitz"
   navbar:
     right:
       - about.qmd
+      - experiments.qmd
       - icon: github
-        href: https://github.com/
+        href: https://github.com/SaremS
       - icon: twitter
-        href: https://twitter.com
+        href: https://twitter.com/sarem_seitz
 format:
   html:
     theme: cosmo

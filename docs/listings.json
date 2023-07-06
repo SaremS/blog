@@ -1,5 +1,16 @@
 [
   {
+    "listing": "/experiments.html",
+    "items": [
+      "/experiments/Censored Data.html",
+      "/experiments/Julia HMM.html",
+      "/experiments/Julia Kalman Filter.html",
+      "/experiments/Particle Filter Maximum Likelihood.html",
+      "/experiments/TimeVaryingCoefficients.html",
+      "/experiments/Julia HMM Scaled.html"
+    ]
+  },
+  {
     "listing": "/index.html",
     "items": [
       "/posts/winning-with-simple-not-even-linear-time-series-models.html",
