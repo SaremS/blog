@@ -2,6 +2,8 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/forecasting-with-decision-trees-and-random-forests.html",
+      "/posts/multivariate-garch-with-python-and-tensorflow.html",
       "/posts/cointegrated-time-series-and-when-difference-transformations-might-be-bad.html",
       "/posts/facebook-prophet-covid-and-why-i-dont-trust-the-prophet.html",
       "/posts/probabilistic-cusum-for-change-point-detection.html",
