@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Sarem Seitz - Variance inequalities</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Sarem Seitz</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../notebooks.html" rel="" target="">
+ <span class="menu-text">Notebooks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../notes.html" rel="" target="">
+ <span class="menu-text">Notes</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/SaremS" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/sarem_seitz" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#efron-stein-inequality" id="toc-efron-stein-inequality" class="nav-link active" data-scroll-target="#efron-stein-inequality">Efron-Stein inequality</a></li>
+  <li><a href="#bounded-differences-property" id="toc-bounded-differences-property" class="nav-link" data-scroll-target="#bounded-differences-property">Bounded differences property</a></li>
+  <li><a href="#self-bounding-functions" id="toc-self-bounding-functions" class="nav-link" data-scroll-target="#self-bounding-functions">Self-Bounding functions</a></li>
+  <li><a href="#poincaré-inequalities" id="toc-poincaré-inequalities" class="nav-link" data-scroll-target="#poincaré-inequalities">Poincaré inequalities</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Variance inequalities</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Concentration inequalities</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Bounds on the variance of random variables and functions thereof. Currently, mostly taken from <span class="citation" data-cites="concentration_inequalities">Boucheron, Lugosi, and Massart (<a href="#ref-concentration_inequalities" role="doc-biblioref">2013</a>)</span>.</p>
+<section id="efron-stein-inequality" class="level2">
+<h2 class="anchored" data-anchor-id="efron-stein-inequality">Efron-Stein inequality</h2>
+<p><strong>Theorem</strong> Let <span class="math inline">\(X_1,...X_N\)</span> be independent random variables, and <span class="math inline">\(Z=f(X)\)</span> a square-integrable function of <span class="math inline">\(X=(X_1,...,X_N)\)</span>. Then</p>
+<p><span class="math display">\[Var(Z)\leq\sum_{i=1}^N \mathbb{E}\left[\left(Z-\mathbb{E}^{(i)}[Z]\right)^2\right]=:v,\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\mathbb{E}^{(i)}[Z]=\int_\mathcal{X}f(X_1,...,X_{i-1},x_i,X_{i+1},...,X_n)d\mu_i(x_i).\]</span></p>
+<p>Let <span class="math inline">\(X_i',...,X_n'\)</span> be independent copies of <span class="math inline">\(X_1,...,X_n\)</span> and define</p>
+<p><span class="math display">\[Z_i'=f(X_1,...,X_{i-1},X_i',X_{i+1},...,X_n).\]</span></p>
+<p>Then</p>
+<p><span class="math display">\[v=\frac{1}{2}\sum_{i=1}^n \mathbb{E}\left[(Z-Z_i')^2\right]=\sum_{i=1}^n \mathbb{E}\left[(Z-Z_i')_+^2\right]=\sum_{i=1}^n \mathbb{E}\left[(Z-Z_i')_-^2\right],\]</span></p>
+<p>where <span class="math inline">\(x_+=\max(x,0)\)</span> and <span class="math inline">\(x_-=\min(x,0)\)</span>. Also,</p>
+<p><span class="math display">\[v=\inf_{Z_i}\sum_{i=1}^n\mathbb{E}\left[(Z-Z_i)^2\right]\]</span></p>
+<p>with the infimum taken over the class of all <span class="math inline">\(X^{(i)}\)</span>-measurable and square-integrable variables <span class="math inline">\(Z_i;i=1,...,n,\)</span></p>
+<p><strong>Proof</strong> Let <span class="math display">\[\Delta_i=\mathbb{E}_i\left[Z-\mathbb{E}^{(i)}[Z]\right],\]</span></p>
+<p>where <span class="math display">\[\mathbb{E}_i[Z]=\int_{\mathcal{X}^{n-i}}f(X_1,...,X_i,x_{i+1},...,x_n)d\mu_{i+1}(x_{i+1})\cdots d\mu_n(x_n).\]</span></p>
+<p>By convention,</p>
+<p><span class="math display">\[\mathbb{E}_{0}[Z]=\mathbb{E}[Z],\]</span></p>
+<p>and, clearly,</p>
+<p><span class="math display">\[\mathbb{E}_i\left[Z-\mathbb{E}^{(i)}[Z]\right]=\mathbb{E}_i[Z]-\mathbb{E}_{i-1}Z.\]</span></p>
+<p>We have</p>
+<p><span class="math display">\[
+\begin{aligned}
+\sum_{i=1}^n\Delta_i &amp;= \sum_{i=1}^n \mathbb{E}_i \left[Z-\mathbb{E}^{(i)}[Z]\right] \\
+&amp;=\sum_{i=1}^n \mathbb{E}_i[Z] - \mathbb{E}_{i-1}[Z] \\
+&amp;= \mathbb{E}_n[Z] - \mathbb{E}_{n-1}[Z] + \mathbb{E}_{n-1}[Z] - \cdots - \mathbb{E}_{1}[Z]  + \mathbb{E}_{0}[Z]\\
+&amp;=Z - \mathbb{E}[Z],
+\end{aligned}
+\]</span></p>
+<p>which implies</p>
+<p><span class="math display">\[Var(Z)=\mathbb{E}\left[(Z - \mathbb{E}[Z])^2\right]=\mathbb{E}\left[\left(\sum_{i=1}^n\Delta_i\right)^2\right].\]</span></p>
+<p>Next, notice that</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbb{E}\left[\left(\sum_{i=1}^n\Delta_i\right)^2\right]&amp;=\mathbb{E}\left[\sum_{i=1}^n\Delta_i^2\right]+\mathbb{E}\left[2\sum_{i=1}^n\Delta_i\Delta_j\right]\\
+&amp;=\sum_{i=1}^n\mathbb{E}\left[\Delta_i^2\right]+2\sum_{i&lt;j}\mathbb{E}\left[\Delta_i\Delta_j\right],
+\end{aligned}
+\]</span></p>
+<p>and, for <span class="math inline">\(j&gt;i\)</span>,</p>
+<p><span class="math display">\[\begin{aligned}\mathbb{E}_i[\Delta_j\Delta_i]&amp;=\Delta_i\mathbb{E}_i[\Delta_j]\\
+&amp;=\Delta_i\mathbb{E}_i[\mathbb{E}_j [Z] - \mathbb{E}_{j-1}[Z]]\\
+&amp;=\Delta_i(\mathbb{E}_i[Z] - \mathbb{E}_{i}[Z])\\
+&amp;=0\end{aligned}.\]</span></p>
+<p>Therefore,</p>
+<p><span class="math display">\[\mathbb{E}[\Delta_j\Delta_i]=\int \mathbb{E}_i[\Delta_j\Delta_i]d\mu(x_1)\cdots d\mu(x_{i-1})=\int 0 d\mu(x_1)\cdots d\mu(x_{i-1})=0,\]</span></p>
+<p>whenever <span class="math inline">\(j&gt;i\)</span>.</p>
+<p>Then, <span class="math display">\[Var(Z) = \mathbb{E}\left[\left(\sum_{i=1}^n\Delta_i\right)^2\right]  =\sum_{i=1}^n\mathbb{E}\left[\Delta_i^2\right].\]</span></p>
+<p>By Jensen’s inequality, we have</p>
+<p><span class="math display">\[\begin{aligned}
+&amp; \Delta_i=\mathbb{E}_i\left[Z-\mathbb{E}^{(i)}[Z]\right]\\
+\Leftrightarrow &amp;\Delta_i^2\leq\mathbb{E}_i\left[(Z-\mathbb{E}^{(i)}[Z])^2\right],
+\end{aligned}\]</span></p>
+<p>and thus</p>
+<p><span class="math display">\[Var(Z) \leq \sum_{i=1}^N \mathbb{E}_i\left[(Z-\mathbb{E}^{(i)}[Z])^2\right].\]</span></p>
+<p>Next, notice that, if <span class="math inline">\(Y\)</span> is an i.i.d. copy of <span class="math inline">\(X\)</span>, we have</p>
+<p><span class="math display">\[\begin{aligned}
+\frac{1}{2}E[(X-Y)^2]&amp;=\frac{1}{2}E[X^2-2XY+Y^2]\\
+&amp;=\frac{1}{2}(E[X^2]-2E[X]E[Y]+E[Y^2])\\
+&amp;=\frac{1}{2}(2E[X^2]-2E[X]^2))\\
+&amp;=E[X^2]-E[X]^2\\
+&amp;=Var(X)
+\end{aligned}.\]</span></p>
+<p>Also, in</p>
+<p><span class="math display">\[\frac{1}{2}\mathbb{E}^{(i)}[(Z-Z_i')^2],\]</span></p>
+<p><span class="math inline">\(Z_i'\)</span> acts as and i.i.d. copy of <span class="math inline">\(Z\)</span> under <span class="math inline">\(E^{(i)}\)</span> (verify by writing out the expectation as an integral and the <span class="math inline">\(Z\)</span>’s as functions of <span class="math inline">\(X_1,...,X_n\)</span> and <span class="math inline">\(X_i'\)</span>.</p>
+<p>Therefore,</p>
+<p><span class="math display">\[Var^{(i)}(Z)=\frac{1}{2}\mathbb{E}^{(i)}[(Z-Z_i')^2].\]</span></p>
+<p>We have</p>
+<p><span class="math display">\[(Z-Z_i')^2=(Z-Z_i')_+^2+(Z-Z_i')_-^2,\]</span></p>
+<p>and</p>
+<p><span class="math display">\[\mathbb{E}[(Z-Z_i')^2]=\mathbb{E}[(Z-Z_i')_+^2]+\mathbb{E}[(Z-Z_i')_-^2],\]</span></p>
+<p>Since <span class="math inline">\(Z\)</span> and <span class="math inline">\(Z_i'\)</span> have the same distribution, i.e.&nbsp;<span class="math inline">\(Z\stackrel{d}{=}Z_i'\)</span>, we can swap them to get</p>
+<p><span class="math display">\[\begin{aligned}
+\mathbb{E}[(Z-Z_i')_-^2]&amp;=\mathbb{E}[(Z_i'-Z)_-^2]\\
+&amp;=\mathbb{E}[(-1)^2\cdot\min(Z_i'-Z,0)^2]\\
+&amp;=\mathbb{E}[\max(Z-Z_i',0)^2]\\
+&amp;=\mathbb{E}[(Z-Z_i')_+^2]
+\end{aligned}\]</span></p>
+<p>and</p>
+<p><span class="math display">\[\mathbb{E}[(Z-Z_i')^2])=2\mathbb{E}[(Z-Z_i')_+^2].\]</span></p>
+<p>This proves that</p>
+<p><span class="math display">\[Var^{(i)}(Z)=\frac{1}{2}\mathbb{E}^{(i)}[(Z-Z_i')^2]=\mathbb{E}[(Z-Z_i')_+^2].\]</span></p>
+<p>For the minimum, we can proceed similarly.</p>
+<p>Finally, we use</p>
+<p><span class="math display">\[Var(X)=\inf_{a\in\mathbb{R}}\mathbb{E}[(X-a)^2]\]</span></p>
+<p>(with a minimum at <span class="math inline">\(a=\mathbb{E}[X]\)</span>) to show that</p>
+<p><span class="math display">\[Var^{(i)}(Z)=\inf_{Z_i}\mathbb{E}^{(i)}[(Z-Z_i)^2]\]</span></p>
+<p>with a minimum at <span class="math inline">\(Z_i=\mathbb{E}^{(i)}Z\)</span><span class="math inline">\(\square\)</span>.</p>
+</section>
+<section id="bounded-differences-property" class="level2">
+<h2 class="anchored" data-anchor-id="bounded-differences-property">Bounded differences property</h2>
+<p>A function has the bounded differences property if, for some non-negative constants <span class="math inline">\(c_1,...,c_n\)</span>,</p>
+<p><span class="math display">\[\sup _{\substack{x_1, \ldots, x_n \\ x_i^{\prime} \in \mathcal{X}}}\left|f\left(x_1, \ldots, x_n\right)-f\left(x_1, \ldots, x_{i-1}, x_i^{\prime}, x_{i+1}, \ldots, x_n\right)\right| \leq c_i, 1 \leq i \leq n\]</span></p>
+<p><strong>Corollary</strong> If <span class="math inline">\(f\)</span> has the bounded differences property, then <span class="math display">\[
+\operatorname{Var}(Z) \leq \frac{1}{4} \sum_{i=1}^n c_i^2
+\]</span></p>
+<p><strong>Proof</strong> Use the Efron-Stein inequality from earlier, namely <span class="math display">\[
+\operatorname{Var}(Z) \leq \inf _{Z_i} \sum_{i=1}^n \mathbb{E}\left[\left(Z-Z_i\right)^2\right].
+\]</span> Since we can choose arbirary <span class="math inline">\(Z_i\)</span> from the class of all <span class="math inline">\(X^{(i)}\)</span>-measurable, square-integrable <span class="math inline">\(Z_i\)</span>, we can use <span class="math display">\[
+\begin{aligned}
+&amp; Z_i=\frac{1}{2}\left(\sup _{x_i^{\prime} \in \mathcal{X}} f\left(X_1, \ldots, X_{i-1}, x_i^{\prime}, X_{i+1}, \ldots, X_n\right)\right. \\
+&amp;\left.+\inf _{x_i^{\prime} \in \mathcal{X}} f\left(X_1, \ldots, X_{i-1}, x_i^{\prime}, X_{i+1}, \ldots, X_n\right)\right),
+\end{aligned}
+\]</span> to exploit the bounded differences property of <span class="math inline">\(f\)</span>. Applying the Efron-Stein inequality then yields <span class="math display">\[
+\left(Z-Z_i\right)^2 \leq \frac{c_i^2}{4},
+\]</span> and the proposition follows by applying summation<span class="math inline">\(\square\)</span>.</p>
+</section>
+<section id="self-bounding-functions" class="level2">
+<h2 class="anchored" data-anchor-id="self-bounding-functions">Self-Bounding functions</h2>
+<p>A non-negative function <span class="math inline">\(f:\mathcal{X}^n\rightarrow [0,\infty)\)</span> has the <em>self-bounding property</em> if there exist functions <span class="math inline">\(f_i:\mathcal{X}^n\rightarrow [0,\infty)\)</span> such that for all <span class="math inline">\(x_1,..,x_n\in\mathcal{X}\)</span> and all <span class="math inline">\(i=1,..,n\)</span>,</p>
+<p><span class="math display">\[
+0 \leq f\left(x_1, \ldots, x_n\right)-f_i\left(x_1, \ldots, x_{i-1}, x_{i+1}, \ldots, x_n\right) \leq 1,
+\]</span> and <span class="math display">\[
+\sum_{i=1}^n\left(f\left(x_1, \ldots, x_n\right)-f_i\left(x_1, \ldots, x_{i-1}, x_{i+1}, \ldots, x_n\right)\right) \leq f\left(x_1, \ldots, x_n\right)
+\]</span> hold.</p>
+<p>Then: <span class="math display">\[
+\sum_{i=1}^n\left(f\left(x_1, \ldots, x_n\right)-f_i\left(x_1, \ldots, x_{i-1}, x_{i+1}, \ldots, x_n\right)\right)^2 \leq f\left(x_1, \ldots, x_n\right)
+\]</span> since the difference is between <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>, and therefore,</p>
+<p><span class="math display">\[\left(f\left(x_1, \ldots, x_n\right)-f_i\left(x_1, \ldots, x_{i-1}, x_{i+1}, \ldots, x_n\right)\right)\leq \left(f\left(x_1, \ldots, x_n\right)-f_i\left(x_1, \ldots, x_{i-1}, x_{i+1}, \ldots, x_n\right)\right)^2\]</span></p>
+<p>for each <span class="math inline">\(i\)</span>.</p>
+<p><strong>Corollary</strong> Then, for <span class="math inline">\(Z=f(X_1,...,X_n\)</span>) and <span class="math inline">\(f\)</span> self-bounding:</p>
+<p><span class="math display">\[
+\operatorname{Var}(Z) \leq \mathbb{E}[Z]
+\]</span></p>
+<p><strong>Proof</strong> We use <span class="math inline">\(Z_i=f_i\left(X_1, \ldots, X_{i-1}, X_{i+1}, \ldots, X_n\right)\)</span> and apply Efron-Stein to get</p>
+<p><span class="math display">\[\begin{aligned}
+Var(Z)&amp;\leq \inf _{Z_i} \sum_{i=1}^n \mathbb{E}\left[\left(Z-Z_i\right)^2\right]\\
+&amp;\leq  \sum_{i=1}^n E\left[\left(f\left(x_1, \ldots, x_n\right)-f_i\left(x_1, \ldots, x_{i-1}, x_{i+1}, \ldots, x_n\right)\right)^2\right]\\
+&amp;\leq \mathbb{E}\left[f\left(x_1, \ldots, x_n\right)\right]\\
+&amp;= \mathbb{E}[Z]\square
+\end{aligned}
+\]</span></p>
+</section>
+<section id="poincaré-inequalities" class="level2">
+<h2 class="anchored" data-anchor-id="poincaré-inequalities">Poincaré inequalities</h2>
+<section id="convex-poincaré-inequality" class="level3">
+<h3 class="anchored" data-anchor-id="convex-poincaré-inequality">Convex Poincaré inequality</h3>
+<p>Presume that <span class="math inline">\(f:\left[0,1\right]^n\rightarrow \mathbb{R}\)</span> is <em>separately convex</em> - for any <span class="math inline">\(i=1,...,n\)</span> and fixed <span class="math inline">\(x_1,...,x_{i-1},x_{i+1},...,x_n\)</span>, <span class="math inline">\(f\)</span> is convex in its <span class="math inline">\(i\)</span>-th variable.</p>
+<p><strong>Theorem</strong> Let <span class="math inline">\(X_1,...X_n\in[0,1]\)</span> be independent random variables and <span class="math inline">\(f:[0,1]^n\rightarrow \mathbb{R}\)</span> be separately convex. Also, presume existence of the partial derivatives of <span class="math inline">\(f\)</span>.</p>
+<p>Then,</p>
+<p><span class="math display">\[
+\operatorname{Var}(f(X)) \leq \mathbb{E}\left[\|\nabla f(X)\|^2\right].
+\]</span></p>
+<p><strong>Proof</strong> Our goal is to bound <span class="math inline">\(\sum_{i=1}^n(Z-Z_i)^2\)</span>, with <span class="math inline">\(Z_i=\inf_{x_i'} f(X_1,...,x_i',...,X_n)\)</span>. Let <span class="math inline">\(X_i'\)</span> denote the <span class="math inline">\(x_i'\)</span> where the minimum is achieved. Write <span class="math inline">\(\bar{X}^{(i)}=(X_1,...,X_{i-1},X_i',X_{i+1},...,X_n)\)</span> - then</p>
+<p><span class="math display">\[
+\begin{aligned}
+\sum_{i=1}^n\left(Z-Z_i\right)^2 &amp; =\sum_{i=1}^n\left(f(X)-f\left(\bar{X}^{(i)}\right)^2\right) \\
+&amp; \leq \sum_{i=1}^n\left(\frac{\partial f}{\partial x_i}(X)\right)^2\left(X_i-X_i^{\prime}\right)^2 \\
+&amp; \leq \sum_{i=1}^n\left(\frac{\partial f}{\partial x_i}(X)\right)^2 \\
+&amp; =\|\nabla f(X)\|^2 .
+\end{aligned}
+\]</span></p>
+<p>The first inequality follows by separate convexity, as for a convex function it holds that</p>
+<p><span class="math display">\[f(x)\geq f(y)+f'(y)(x-y) \leftrightarrow (f(x)- f(y))^2 \geq f'(y)^2(x-y)^2.\]</span></p>
+<p>The second inequality is due to the fact that all <span class="math inline">\(X_i\)</span>, <span class="math inline">\(X_i'\)</span> are in <span class="math inline">\([0,1]\)</span>, thus the corresponding squared differences are all in <span class="math inline">\([0,1]\)</span>, too.</p>
+<p>Finally, applying the mean operator on boths sides and applying Efron-Stein to the left side yields the result<span class="math inline">\(\square\)</span></p>
+</section>
+<section id="gaussian-poincaré-inequality" class="level3">
+<h3 class="anchored" data-anchor-id="gaussian-poincaré-inequality">Gaussian Poincaré Inequality</h3>
+<p><strong>Theorem</strong> Let <span class="math inline">\(X=(X_1,...,X_n)\)</span> be a vector of i.i.d. standard Gaussians. Let <span class="math inline">\(f:\mathbb{R}^n\rightarrow \mathbb{R}\)</span> be continuously differentiable. Then</p>
+<p><span class="math display">\[
+\operatorname{Var}(f(X)) \leq \mathbb{E}\left[\|\nabla f(X)\|^2\right]
+\]</span></p>
+<p><strong>Proof</strong> Assume that <span class="math inline">\(\mathbb{E}\left[\|\nabla f(X)\|^2\right]&lt;\infty\)</span>, otherwise the result is trivial.</p>
+<p>Given that <span class="math display">\[\|x\|^2=\sum_{i=1}^n x^2\]</span>, it suffices to prove the inequality for <span class="math inline">\(n=1\)</span>:</p>
+<p><span class="math display">\[
+\operatorname{Var}(f(X)) \leq E\left[f^{\prime}(X)^2\right]
+\]</span></p>
+<p>It suffices to prove this for <span class="math inline">\(f\)</span> with compact support and being twice continuously differentiable.</p>
+<p>Let <span class="math inline">\(\epsilon_1,...,\epsilon_n\)</span> be independent Rademacher variables and</p>
+<p><span class="math display">\[
+S_n=n^{-1 / 2} \sum_{j=1}^n \varepsilon_j.
+\]</span></p>
+<p>Then, we have</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbb{E}^{(i)}\left[f\left(S_n\right)\right] &amp; =\frac{1}{2} f\left(S_n-\frac{\varepsilon_i}{\sqrt{n}}+\frac{1}{\sqrt{n}}\right)+\frac{1}{2} f\left(S_n-\frac{\varepsilon_i}{\sqrt{n}}-\frac{1}{\sqrt{n}}\right) \\
+&amp; =\frac{1}{2} f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)+\frac{1}{2} f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)
+\end{aligned}
+\]</span></p>
+<p>and <span class="math display">\[
+\begin{aligned}
+Var^{(i)}\left(f\left(S_n\right)\right)&amp;= \frac{1}{2}\left[f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)-\frac{1}{2} f\left(S_n+\frac{1-r_i}{\sqrt{n}}\right)-\frac{1}{2} f\left(S_n-\frac{1-\varepsilon_i}{\sqrt{n}}\right)\right]^2 \\
+&amp;\quad+\frac{1}{2}\left[f\left(S_n-\frac{1+c_i}{\sqrt{n}}\right)-\frac{1}{2} f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)-\frac{1}{2} f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)\right]^2 \\
+&amp;=\frac{1}{2} {\left[\frac{1}{2} f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)-\frac{1}{2} f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)\right]^2 } \\
+&amp;\quad+\frac{1}{2}\left[\frac{1}{2} f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)-\frac{1}{2} f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)\right]^2 \\
+&amp;=\frac{1}{2}\left[\frac{1}{4} f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)^2-2 \cdot \frac{1}{2} f\left(S_n+\frac{1-r_i}{\sqrt{n}}\right) \frac{1}{2} f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)+\frac{1}{4} f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)^2\right. \\
+&amp;\left.\quad+\frac{1}{4} f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)^2-2 \cdot \frac{1}{2} f\left(S_n+\frac{1-r_i}{\sqrt{n}}\right) \frac{1}{2} f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)+\frac{1}{n} f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)^2\right] \\
+&amp;=\frac{1}{2}\left[\frac{1}{2} f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)^2-2 \cdot \frac{1}{2} f\left(S_n+\frac{1-r_i}{\sqrt{n}}\right) f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)+\frac{1}{2} f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)^2\right] \\
+&amp;= \frac{1}{4}\left(f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)-f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)\right)^2.
+\end{aligned}
+\]</span></p>
+<p>Since</p>
+<p><span class="math display">\[\sum_{i=1}^n E\left[\left(Z-E^{(i)} Z\right)^2\right]=\sum_{i=1}^n \boldsymbol{E}\left[\operatorname{Var}^{(i)}(Z)\right],\]</span></p>
+<p>we can apply Efron-Stein on <span class="math inline">\(Var^{(i)}\left(f\left(S_n\right)\right)\)</span>:</p>
+<p><span class="math display">\[
+\operatorname{Var}\left(f\left(S_n\right)\right) \leq \frac{1}{4} \sum_{i=1}^n \boldsymbol{E}\left[\left(f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)-f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)\right)^2\right]
+\]</span></p>
+<p>The Rademacher sum converges in distribution to a standard Gaussian, hence <span class="math inline">\(Var(f(S_n))\)</span> converges to <span class="math inline">\(Var(f(X))\)</span>.</p>
+<p>Now, apply a Taylor approximation:</p>
+<p><span class="math display">\[
+\left|f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)-f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)\right| \leq \frac{2}{\sqrt{n}}\left|f^{\prime}\left(S_n\right)\right|+\frac{2 K}{n}
+\]</span></p>
+<p>where <span class="math inline">\(K\)</span> denotes the supremum of the absolute value of <span class="math inline">\(f''\)</span>. This yields</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp; \frac{n}{4}\left(f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)-f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)\right)^2 \\
+&amp; \leq f^{\prime}\left(S_n\right)^2+\frac{2 K}{\sqrt{n}}\left|f^{\prime}\left(S_n\right)\right|+\frac{K^2}{n} .
+\end{aligned}
+\]</span></p>
+<p>Finally, for the limit of the upper bound (when <span class="math inline">\(f(S_n)\)</span> converges to <span class="math inline">\(f(X)\)</span>), we obtain</p>
+<p><span class="math display">\[
+\limsup _{n \rightarrow \infty} \frac{1}{4} \sum_{i=1}^n E\left[\left(f\left(S_n+\frac{1-\varepsilon_i}{\sqrt{n}}\right)-f\left(S_n-\frac{1+\varepsilon_i}{\sqrt{n}}\right)\right)^2\right]=E\left[f^{\prime}(X)^2\right].
+\]</span></p>
+<p>For Lipschitz-functions with Lipschitz constant <span class="math inline">\(1\)</span>, this implies (via the <a href="https://en.wikipedia.org/wiki/Mean_value_theorem">Mean value theorem</a>):</p>
+<p><span class="math display">\[Var(f(X))\leq 1\]</span></p>
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-concentration_inequalities" class="csl-entry" role="listitem">
+Boucheron, Stéphane, Gábor Lugosi, and Pascal Massart. 2013. <em>Concentration Inequalities: A Nonasymptotic Theory of Independence</em>. Oxford university press.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

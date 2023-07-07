@@ -7,7 +7,8 @@ website:
   navbar:
     right:
       - about.qmd
-      - experiments.qmd
+      - notebooks.qmd
+      - notes.qmd
       - icon: github
         href: https://github.com/SaremS
       - icon: twitter

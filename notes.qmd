@@ -1,0 +1,14 @@
+---
+title: "Notes"
+listing:
+  contents: notes
+  sort: "title asc"
+  type: table
+  categories: true
+  sort-ui: false
+  filter-ui: false
+  fields: [title]
+page-layout: full
+title-block-banner: true
+---
+Personal notes on various topics, mostly theory.

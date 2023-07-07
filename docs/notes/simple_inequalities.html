@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Sarem Seitz - Experiments</title>
+<title>Sarem Seitz - Basic concentration inequalities</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +20,44 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,50 +78,21 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-title',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-title-sort'] }],
-      
-      searchColumns: ["listing-title","listing-author"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Sarem Seitz</span>
     </a>
   </div>
@@ -115,12 +103,16 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html" rel="" target="">
+    <a class="nav-link" href="../about.html" rel="" target="">
  <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./experiments.html" rel="" target="" aria-current="page">
- <span class="menu-text">Experiments</span></a>
+    <a class="nav-link" href="../notebooks.html" rel="" target="">
+ <span class="menu-text">Notebooks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../notes.html" rel="" target="">
+ <span class="menu-text">Notes</span></a>
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/SaremS" rel="" target=""><i class="bi bi-github" role="img">
@@ -140,105 +132,131 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page">
-      <h1 class="title">Experiments</h1>
-                      </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#simple-tail-bound-for-the-normal-distribution" id="toc-simple-tail-bound-for-the-normal-distribution" class="nav-link active" data-scroll-target="#simple-tail-bound-for-the-normal-distribution">Simple tail bound for the Normal distribution</a></li>
+  <li><a href="#markovs-inequality" id="toc-markovs-inequality" class="nav-link" data-scroll-target="#markovs-inequality">Markov’s inequality</a></li>
+  <li><a href="#chebyshevs-inequality" id="toc-chebyshevs-inequality" class="nav-link" data-scroll-target="#chebyshevs-inequality">Chebyshev’s inequality</a></li>
+  <li><a href="#cramér-chernoff-method" id="toc-cramér-chernoff-method" class="nav-link" data-scroll-target="#cramér-chernoff-method">Cramér-Chernoff method</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Basic concentration inequalities</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Concentration inequalities</div>
+  </div>
+  </div>
 
 
 
+<div class="quarto-title-meta">
 
-<p>Collection of short notebooks that don’t qualify as full-length articles.</p>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Collection of fairly simple, well-known inequalities that are typically taught at the beginning of a respective course or book.</p>
+<section id="simple-tail-bound-for-the-normal-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="simple-tail-bound-for-the-normal-distribution">Simple tail bound for the Normal distribution</h2>
+<p><span class="citation" data-cites="high_dimensional_probability">(<a href="#ref-high_dimensional_probability" role="doc-biblioref">Vershynin 2018</a>)</span></p>
+<p><strong>Proposition</strong> Let <span class="math inline">\(X\sim\mathcal{N}(0,1)\)</span>. For all <span class="math inline">\(t&gt;0\)</span>, we have</p>
+<p><span class="math display">\[P(X\geq t) \leq\frac{1}{t}\frac{1}{\sqrt{2\pi}}\exp{(-t^2/2)}.\]</span></p>
+<p>For $t $, the tail bound is</p>
+<p><span class="math display">\[P(X\geq t)=\frac{1}{\sqrt{2\pi}}\exp{(-t^2/2)}.\]</span></p>
+<p><strong>Proof</strong> We have</p>
+<p><span class="math display">\[P(X \geq t =\frac{1}{\sqrt{2\pi}})\int_{t}^\infty \exp{(-x^2/2)}\]</span></p>
+<p>Apply change-of-variables <span class="math inline">\(x=t+y\)</span>:</p>
+<p><span class="math display">\[\begin{aligned}
+P(X \geq t)&amp;=\frac{1}{\sqrt{2\pi}}\int_0^\infty \exp{(-t^2/2)}\exp{(-ty)}\exp{(-y^2/2)}dy\\
+&amp;\leq \frac{1}{\sqrt{2\pi}}\exp{(-t^2/2)}\int_0^\infty \exp(-ty)dy\\
+&amp;=\frac{1}{t}\frac{1}{\sqrt{2\pi}}\exp{(-t^2/2)}\square
+\end{aligned}\]</span></p>
+</section>
+<section id="markovs-inequality" class="level2">
+<h2 class="anchored" data-anchor-id="markovs-inequality">Markov’s inequality</h2>
+<p><span class="citation" data-cites="concentration_inequalities">(<a href="#ref-concentration_inequalities" role="doc-biblioref">Boucheron, Lugosi, and Massart 2013</a>)</span></p>
+<p><strong>Proposition</strong> For a non-negative random variable <span class="math inline">\(X\)</span> and <span class="math inline">\(t&gt;0\)</span>, it follows that</p>
+<p><span class="math inline">\(P(X\geq t)\leq \frac{\mathbb{E}[X]}{t}\)</span>$</p>
+<p><strong>Proof</strong> We have <span class="math display">\[
+\begin{aligned}
+X \geq t &amp;\Leftrightarrow X\mathbb{I}_{X\geq t} \geq t\mathbb{I}_{X\geq t}\\
+&amp; \Leftrightarrow \mathbb{E}[X\mathbb{I}_{X\geq t}] \geq \mathbb{E}[t\mathbb{I}_{X\geq t}] \\
+&amp; \Leftrightarrow \mathbb{E}[X\mathbb{I}_{X\geq t}] \geq t\mathbb{E}[\mathbb{I}_{X\geq t}] \\
+&amp; \Leftrightarrow \frac{\mathbb{E}[X\mathbb{I}_{X\geq t}]}{t} \geq P(X\geq t)\\
+&amp; \Leftrightarrow P(X\geq t) \leq \frac{\mathbb{E}[X\mathbb{I}_{X\geq t}]}{t} \leq \frac{\mathbb{E}[{X\geq t}]}{t}\square
+\end{aligned}
+\]</span></p>
+<p>We can extend Markov’s inequality by choosing <span class="math inline">\(X\)</span> to be defined over an interval <span class="math inline">\(I\subset\mathbb{R}\)</span>, <span class="math inline">\(\phi\)</span> a non-decreasing, non-negative function over <span class="math inline">\(I\)</span>.</p>
+<p>For any <span class="math inline">\(t\in I\)</span>, we then have</p>
+<p><span class="math display">\[P(X\geq t)\leq P(\phi(X)\geq \phi(t))\leq \frac{\mathbb{E}[\phi(X)]}{\phi(t)}\]</span></p>
+</section>
+<section id="chebyshevs-inequality" class="level2">
+<h2 class="anchored" data-anchor-id="chebyshevs-inequality">Chebyshev’s inequality</h2>
+<p><span class="citation" data-cites="concentration_inequalities">(<a href="#ref-concentration_inequalities" role="doc-biblioref">Boucheron, Lugosi, and Massart 2013</a>)</span></p>
+<p>Setting <span class="math inline">\(X=|Y-\mathbb{E}[Y]|\)</span> and <span class="math inline">\(\phi(t)=t^q\)</span> in Markov’s inequality, we get</p>
+<p><span class="math display">\[P(|Y-\mathbb{E}[Y]|\geq t)\leq\frac{\mathbb{E}[|Y-\mathbb{E}[Y]|^q]}{t^q}\]</span></p>
+<p>It is then possible to find an optimal <span class="math inline">\(q\)</span> for this inequality, such that <span class="math inline">\(\mathbb{E}[Y]^q &lt;\infty\)</span> holds, too.</p>
+<p>The original Chebyshev inequality actually uses <span class="math inline">\(q=2\)</span>, which creates a bound with respect to <span class="math inline">\(Var(Y)\)</span>.</p>
+</section>
+<section id="cramér-chernoff-method" class="level2">
+<h2 class="anchored" data-anchor-id="cramér-chernoff-method">Cramér-Chernoff method</h2>
+<p><span class="citation" data-cites="concentration_inequalities">(<a href="#ref-concentration_inequalities" role="doc-biblioref">Boucheron, Lugosi, and Massart 2013</a>)</span></p>
+<p>The key idea is to use Markov’s inequality with <span class="math inline">\(phi(t)=\exp{(\lambda t)}\)</span> and <span class="math inline">\(\lambda \geq 0\)</span>:</p>
+<p><span class="math display">\[P(X \geq t)\leq \exp{(-\lambda t)}\mathbb{E}[\exp{(\lambda X)}]\]</span></p>
+<p>Notice that <span class="math inline">\(\mathbb{E}[\exp{(\lambda X)}]\)</span> is the moment-generating function of <span class="math inline">\(X\)</span>.</p>
+<p>Define</p>
+<p><span class="math display">\[\psi_X(\lambda)=\log{\mathbb{E}[\exp{(\lambda X)}]}\]</span></p>
+<p>and</p>
+<p><span class="math display">\[\psi^*_X(t)=\sup_{\lambda \geq 0}(\lambda t-\psi_X(\lambda)).\]</span></p>
+<p>This is known as the Cramér transform of <span class="math inline">\(X\)</span>.</p>
+<p>We have</p>
+<p><span class="math display">\[
+\begin{aligned}
+\exp{(-\lambda t)}\mathbb{E}[\exp{(\lambda X)}] &amp;=\exp{(\log\mathbb{E}[\exp{(\lambda X)}]}-\lambda t)\\
+&amp;=\exp{(\psi_X(\lambda)-\lambda t)}\\
+&amp;=\exp{(-(\lambda t-\psi_X(\lambda)))}.
+\end{aligned}
+\]</span></p>
+<p>Since this holds for any <span class="math inline">\(t\)</span> <strong>and</strong> <span class="math inline">\(\lambda\)</span>, it also holds that</p>
+<p><span class="math display">\[P(X \geq t)\leq \exp{(-\psi_X^*(t))}.\]</span></p>
+<p>Next, notice that</p>
+<p><span class="math display">\[\psi_X(\lambda)=\log\mathbb{E}[\exp{(\lambda X)}]\geq \log\exp\mathbb{E}[\lambda X]=\lambda\mathbb{E}[ X]\]</span></p>
+<p>by Jensen’s inequality. Then,</p>
+<p><span class="math display">\[\lambda t-\psi_X(\lambda)\leq 0\]</span></p>
+<p>whenever <span class="math inline">\(t\geq \mathbb{E}[X]\)</span>. This allows us to extend the Cramér transform to the Fenchel-Legendre dual</p>
+<p><span class="math display">\[\psi^*_X(t)=\sup_{\lambda \in\mathbb{R}}(\lambda t-\psi_X(\lambda)),\]</span></p>
+<p>whenever <span class="math inline">\(t\geq\mathbb{E}[X]\)</span>.</p>
 
 
 
+</section>
 
-<div class="quarto-listing quarto-listing-container-table" id="listing-listing">
-
-<table class="quarto-listing-table table">
-<thead>
-<tr>
-<th>
-Title
-</th>
-</tr>
-</thead>
-<tbody class="list">
-<tr data-index="0" data-listing-file-modified-sort="1688679782915" data-listing-reading-time-sort="1" data-listing-title-sort="Decision Tree ensembles for volatility forecasting" data-listing-filename-sort="Decision Tree Ensembles for Volatility Forecasts.ipynb">
-<td>
-<a href="./experiments/Decision Tree Ensembles for Volatility Forecasts.html" class="title listing-title">Decision Tree ensembles for volatility forecasting</a>
-</td>
-</tr>
-<tr data-index="1" data-listing-file-modified-sort="1688680116714" data-listing-reading-time-sort="1" data-listing-title-sort="Estimating censored distributions" data-listing-filename-sort="Censored Data.ipynb">
-<td>
-<a href="./experiments/Censored Data.html" class="title listing-title">Estimating censored distributions</a>
-</td>
-</tr>
-<tr data-index="2" data-listing-file-modified-sort="1688680108721" data-listing-reading-time-sort="1" data-listing-title-sort="Hidden-Markov model estimation in Julia" data-listing-filename-sort="Julia HMM.ipynb">
-<td>
-<a href="./experiments/Julia HMM.html" class="title listing-title">Hidden-Markov model estimation in Julia</a>
-</td>
-</tr>
-<tr data-index="3" data-listing-file-modified-sort="1688680111316" data-listing-reading-time-sort="1" data-listing-title-sort="Kalman Filter for a Linear State-Space model in Julia" data-listing-filename-sort="Julia Kalman Filter.ipynb">
-<td>
-<a href="./experiments/Julia Kalman Filter.html" class="title listing-title">Kalman Filter for a Linear State-Space model in Julia</a>
-</td>
-</tr>
-<tr data-index="4" data-listing-file-modified-sort="1688680113165" data-listing-reading-time-sort="1" data-listing-title-sort="Maximum Likelihood of latent-variable models via Particle Filters" data-listing-filename-sort="Particle Filter Maximum Likelihood.ipynb">
-<td>
-<a href="./experiments/Particle Filter Maximum Likelihood.html" class="title listing-title">Maximum Likelihood of latent-variable models via Particle Filters</a>
-</td>
-</tr>
-<tr data-index="5" data-listing-file-modified-sort="1688680115035" data-listing-reading-time-sort="1" data-listing-title-sort="Models with time-varying coefficients" data-listing-filename-sort="TimeVaryingCoefficients.ipynb">
-<td>
-<a href="./experiments/TimeVaryingCoefficients.html" class="title listing-title">Models with time-varying coefficients</a>
-</td>
-</tr>
-<tr data-index="6" data-listing-file-modified-sort="1688679915852" data-listing-reading-time-sort="1" data-listing-title-sort="Multivariate GARCH in Python" data-listing-filename-sort="Multivariate GARCH.ipynb">
-<td>
-<a href="./experiments/Multivariate GARCH.html" class="title listing-title">Multivariate GARCH in Python</a>
-</td>
-</tr>
-<tr data-index="7" data-listing-file-modified-sort="1688708432938" data-listing-reading-time-sort="1" data-listing-title-sort="Probabilistic forecasts with Random Forests" data-listing-filename-sort="Probabilistic Forecasts with Random Forests.ipynb">
-<td>
-<a href="./experiments/Probabilistic Forecasts with Random Forests.html" class="title listing-title">Probabilistic forecasts with Random Forests</a>
-</td>
-</tr>
-<tr data-index="8" data-listing-file-modified-sort="1688680123867" data-listing-reading-time-sort="1" data-listing-title-sort="Scalable variant of the forward-backward algorithm for Hidden-Markov models" data-listing-filename-sort="Julia HMM Scaled.ipynb">
-<td>
-<a href="./experiments/Julia HMM Scaled.html" class="title listing-title">Scalable variant of the forward-backward algorithm for Hidden-Markov models</a>
-</td>
-</tr>
-<tr data-index="9" data-listing-file-modified-sort="1688708395927" data-listing-reading-time-sort="1" data-listing-title-sort="Varying Coefficient GARCH" data-listing-filename-sort="Varying Coefficient GARCH.ipynb">
-<td>
-<a href="./experiments/Varying Coefficient GARCH.html" class="title listing-title">Varying Coefficient GARCH</a>
-</td>
-</tr>
-</tbody>
-
-</table>
-<div class="listing-no-matching d-none">
-No matching items
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-concentration_inequalities" class="csl-entry" role="listitem">
+Boucheron, Stéphane, Gábor Lugosi, and Pascal Massart. 2013. <em>Concentration Inequalities: A Nonasymptotic Theory of Independence</em>. Oxford university press.
 </div>
-</div></main> <!-- /main -->
+<div id="ref-high_dimensional_probability" class="csl-entry" role="listitem">
+Vershynin, Roman. 2018. <em>High-Dimensional Probability: An Introduction with Applications in Data Science</em>. Vol. 47. Cambridge university press.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

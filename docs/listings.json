@@ -1,17 +1,15 @@
 [
   {
-    "listing": "/experiments.html",
+    "listing": "/notebooks.html",
+    "items": []
+  },
+  {
+    "listing": "/notes.html",
     "items": [
-      "/experiments/Decision Tree Ensembles for Volatility Forecasts.html",
-      "/experiments/Censored Data.html",
-      "/experiments/Julia HMM.html",
-      "/experiments/Julia Kalman Filter.html",
-      "/experiments/Particle Filter Maximum Likelihood.html",
-      "/experiments/TimeVaryingCoefficients.html",
-      "/experiments/Multivariate GARCH.html",
-      "/experiments/Probabilistic Forecasts with Random Forests.html",
-      "/experiments/Julia HMM Scaled.html",
-      "/experiments/Varying Coefficient GARCH.html"
+      "/notes/simple_inequalities.html",
+      "/notes/brownian_motion.html",
+      "/notes/bnn_gp_limit.html",
+      "/notes/variance_inequalities.html"
     ]
   },
   {

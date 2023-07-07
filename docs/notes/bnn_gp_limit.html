@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Sarem Seitz - About</title>
+<title>Sarem Seitz - Gaussian Process limits of Bayesian Neural Networks</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,24 +20,44 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -59,18 +79,20 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Sarem Seitz</span>
     </a>
   </div>
@@ -81,15 +103,15 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./about.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../about.html" rel="" target="">
  <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./notebooks.html" rel="" target="">
+    <a class="nav-link" href="../notebooks.html" rel="" target="">
  <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./notes.html" rel="" target="">
+    <a class="nav-link" href="../notes.html" rel="" target="">
  <span class="menu-text">Notes</span></a>
   </li>  
   <li class="nav-item compact">
@@ -112,40 +134,89 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#original-results-from-r.-neal" id="toc-original-results-from-r.-neal" class="nav-link active" data-scroll-target="#original-results-from-r.-neal">Original results from R. Neal</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
 <!-- main -->
-<div class="quarto-about-jolla">
-  <img src="profile.jpg" class="about-image
-  round " style="height: 15em; width: 15em;">
- <header id="title-block-header" class="quarto-title-block default">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">About</h1>
-</div>
-<div class="quarto-title-meta">
+<h1 class="title">Gaussian Process limits of Bayesian Neural Networks</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Bayesian Machine Learning</div>
+    <div class="quarto-category">Gaussian Processes</div>
+    <div class="quarto-category">Bayesian Neural Networks</div>
   </div>
-</header><main class="content" id="quarto-document-content">
-<p>About this blog</p>
+  </div>
 
 
-</main> 
-  <hr class="about-sep">
-   <div class="about-links">
-  <a href="https://twitter.com/sarem_seitz" class="about-link" rel="" target="">
-    <i class="bi bi-twitter"></i>
-     <span class="about-link-text">Twitter</span>
-  </a>
-  <a href="https://www.linkedin.com/in/sarem-seitz-647732134/" class="about-link" rel="" target="">
-    <i class="bi bi-linkedin"></i>
-     <span class="about-link-text">LinkedIn</span>
-  </a>
-  <a href="https://github.com/SaremS" class="about-link" rel="" target="">
-    <i class="bi bi-github"></i>
-     <span class="about-link-text">Github</span>
-  </a>
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In <span class="citation" data-cites="neal2012bayesian">Neal (<a href="#ref-neal2012bayesian" role="doc-biblioref">2012</a>)</span>, it was shown that Bayesian Neural Networks (BNNs) with Gaussian weight priors <span class="math inline">\(w_i\sim\mathcal{N}(0,\sigma^2)\)</span> and one hidden layer converge to Gaussian Processes (GPs) in the limit of an infinitely wide hidden layer.</p>
+<section id="original-results-from-r.-neal" class="level2">
+<h2 class="anchored" data-anchor-id="original-results-from-r.-neal">Original results from R. Neal</h2>
+<p>For now, we define our Neural Network as follows: <span class="math display">\[
+\begin{aligned}
+&amp; f(x)=b+\sum_{j=1}^H v_j h_j(x) \\
+&amp; h_j(x)=\tanh \left(a_j+\sum_{i=1}^1 u_{i j} x_i\right)
+\end{aligned}
+\]</span> (Neal allows for multiple outputs as well - we’ll stick to single-dimensional output for now).</p>
+<p>Presume independent Gaussian priors over weights and biases: <span class="math display">\[
+\begin{aligned}
+v_j &amp;\sim \mathcal{N}\left(0, \sigma_v^2\right) \\
+b &amp;\sim \mathcal{N}\left(0, \sigma_b^2\right) \\
+a_j &amp;\sim \mathcal{N}\left(0, \sigma_a^2\right) \\
+u_{i j} &amp;\sim \mathcal{N}\left(0, \sigma_v^2\right)
+\end{aligned}
+\]</span></p>
+<p>For a given <span class="math inline">\(x\)</span>, we get</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbb { E }[f(x)] &amp; =\mathbb{E}\left[b+\sum_{j=1}^H v_j h_j(x)\right] \\
+&amp; =\underbrace{\mathbb{E}[b]}_{=0}+\sum_{j=1}^H \mathbb{E}\left[v_j h_j(x)\right] \\
+&amp; =\sum_{j=1}^H \underbrace{\mathbb{E}\left[v_j\right]}_{=0} \mathbb{E}\left[h_j(x)\right]\left(\text{ by independence of priors }\right) \\
+&amp; =0
+\end{aligned}
+\]</span></p>
+<p>Since the means of <span class="math inline">\(f(x)\)</span> and the weight priors are zero, we can calculate variances via second moments: <span class="math display">\[
+\begin{aligned}
+\operatorname{Var}(f(x)) &amp; =\operatorname{Var}\left(b+\sum_{j=1}^H v_j h_j(x)\right) \\
+&amp; =\underbrace{\operatorname{Var}(b)}_{=\sigma_b^2}+\sum_{j=1}^H \operatorname{Var}\left(v_j h_j(x)\right) \\
+&amp; =\sigma_b^2+\sum_{j=1}^H \mathbb{E}\left[v_j^2\right] \underbrace{\mathbb{E}\left[h_j(x)^2\right]}_{:=V(x)} \\
+&amp; =\sigma_b{ }^2+\sum_{j=1}^H \sigma_v{ }^2 V(x) \\
+&amp; =\sigma_b^2+H \sigma_v{ }^2 V(x)
+\end{aligned}
+\]</span></p>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-neal2012bayesian" class="csl-entry" role="listitem">
+Neal, Radford M. 2012. <em>Bayesian Learning for Neural Networks</em>. Vol. 118. Springer Science &amp; Business Media.
 </div>
-</div>
- <!-- /main -->
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -166,6 +237,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
   const isCodeAnnotation = (el) => {
     for (const clz of el.classList) {
       if (clz.startsWith('code-annotation-')) {                     

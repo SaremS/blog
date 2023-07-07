@@ -1,7 +1,7 @@
 ---
-title: "Experiments"
+title: "Notebooks"
 listing:
-  contents: experiments
+  contents: notebooks
   sort: "title asc"
   type: table
   categories: false
