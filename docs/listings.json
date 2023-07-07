@@ -1,7 +1,18 @@
 [
   {
     "listing": "/notebooks.html",
-    "items": []
+    "items": [
+      "/notebooks/Decision Tree Ensembles for Volatility Forecasts.html",
+      "/notebooks/Censored Data.html",
+      "/notebooks/Julia HMM.html",
+      "/notebooks/Julia Kalman Filter.html",
+      "/notebooks/Particle Filter Maximum Likelihood.html",
+      "/notebooks/TimeVaryingCoefficients.html",
+      "/notebooks/Multivariate GARCH.html",
+      "/notebooks/Probabilistic Forecasts with Random Forests.html",
+      "/notebooks/Julia HMM Scaled.html",
+      "/notebooks/Varying Coefficient GARCH.html"
+    ]
   },
   {
     "listing": "/notes.html",
