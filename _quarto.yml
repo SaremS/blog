@@ -4,15 +4,22 @@ project:
 
 website:
   title: "Sarem Seitz"
+  site-url: 'https://sarem-seitz.com'
   navbar:
     right:
+      - text: "Home"
+        file: index.qmd
+      - text: "More"
+        menu:
+          - notebooks.qmd
+          - notes.qmd
       - about.qmd
-      - notebooks.qmd
-      - notes.qmd
       - icon: github
         href: https://github.com/SaremS
       - icon: twitter
         href: https://twitter.com/sarem_seitz
+      - icon: rss
+        href: blog.xml
 format:
   html:
     theme: cosmo
