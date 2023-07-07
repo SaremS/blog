@@ -2,12 +2,16 @@
   {
     "listing": "/experiments.html",
     "items": [
+      "/experiments/Decision Tree Ensembles for Volatility Forecasts.html",
       "/experiments/Censored Data.html",
       "/experiments/Julia HMM.html",
       "/experiments/Julia Kalman Filter.html",
       "/experiments/Particle Filter Maximum Likelihood.html",
       "/experiments/TimeVaryingCoefficients.html",
-      "/experiments/Julia HMM Scaled.html"
+      "/experiments/Multivariate GARCH.html",
+      "/experiments/Probabilistic Forecasts with Random Forests.html",
+      "/experiments/Julia HMM Scaled.html",
+      "/experiments/Varying Coefficient GARCH.html"
     ]
   },
   {
