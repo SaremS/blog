@@ -2,138 +2,138 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://sarem-seitz.com/notebooks/Julia HMM Scaled.html</loc>
-    <lastmod>2023-07-07T13:16:02.265Z</lastmod>
+    <lastmod>2023-07-08T06:09:33.577Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks/Varying Coefficient GARCH.html</loc>
-    <lastmod>2023-07-07T13:16:00.912Z</lastmod>
+    <lastmod>2023-07-08T06:09:32.236Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks/Particle Filter Maximum Likelihood.html</loc>
-    <lastmod>2023-07-07T13:15:59.453Z</lastmod>
+    <lastmod>2023-07-08T06:09:30.668Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks/Censored Data.html</loc>
-    <lastmod>2023-07-07T13:15:57.983Z</lastmod>
+    <lastmod>2023-07-08T06:09:28.825Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks/Decision Tree Ensembles for Volatility Forecasts.html</loc>
-    <lastmod>2023-07-07T13:15:56.676Z</lastmod>
+    <lastmod>2023-07-08T06:09:27.307Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notes/variance_inequalities.html</loc>
-    <lastmod>2023-07-07T13:15:55.414Z</lastmod>
+    <lastmod>2023-07-08T06:09:26.129Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notes/brownian_motion.html</loc>
-    <lastmod>2023-07-07T13:15:54.429Z</lastmod>
+    <lastmod>2023-07-08T06:09:25.142Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/about.html</loc>
-    <lastmod>2023-07-07T13:15:53.446Z</lastmod>
+    <lastmod>2023-07-08T06:09:24.271Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks.html</loc>
-    <lastmod>2023-07-07T13:15:51.340Z</lastmod>
+    <lastmod>2023-07-08T06:09:22.083Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/cointegrated-time-series-and-when-difference-transformations-might-be-bad.html</loc>
-    <lastmod>2023-07-07T13:15:49.771Z</lastmod>
+    <lastmod>2023-07-08T06:09:20.597Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/varying-coefficient-garch.html</loc>
-    <lastmod>2023-07-07T13:15:47.606Z</lastmod>
+    <lastmod>2023-07-08T06:09:18.442Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/lets-make-garch-more-flexible-with-normalizing-flows.html</loc>
-    <lastmod>2023-07-07T13:15:45.395Z</lastmod>
+    <lastmod>2023-07-08T06:09:16.292Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/facebook-prophet-covid-and-why-i-dont-trust-the-prophet.html</loc>
-    <lastmod>2023-07-07T13:15:42.786Z</lastmod>
+    <lastmod>2023-07-08T06:09:13.789Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/winning-with-simple-not-even-linear-time-series-models.html</loc>
-    <lastmod>2023-07-07T13:15:40.841Z</lastmod>
+    <lastmod>2023-07-08T06:09:12.016Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/multivariate-probabilistic-time-series-forecasting-with-lstm-and-gaussian-copula.html</loc>
-    <lastmod>2023-07-07T13:15:38.711Z</lastmod>
+    <lastmod>2023-07-08T06:09:10.000Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/random-forests-and-boosting-for-arch-like-volatility-forecasts.html</loc>
-    <lastmod>2023-07-07T13:15:36.906Z</lastmod>
+    <lastmod>2023-07-08T06:09:08.086Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/probabilistic-cusum-for-change-point-detection.html</loc>
-    <lastmod>2023-07-07T13:15:34.550Z</lastmod>
+    <lastmod>2023-07-08T06:09:05.737Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notes.html</loc>
-    <lastmod>2023-07-07T13:15:33.685Z</lastmod>
+    <lastmod>2023-07-08T06:09:04.931Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/arma-forecasting-for-non-gaussian-time-series-data-using-copulas.html</loc>
-    <lastmod>2023-07-07T13:15:36.012Z</lastmod>
+    <lastmod>2023-07-08T06:09:07.118Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/multivariate-garch-with-python-and-tensorflow.html</loc>
-    <lastmod>2023-07-07T13:15:37.847Z</lastmod>
+    <lastmod>2023-07-08T06:09:09.185Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/when-point-forecasts-are-completely-useless.html</loc>
-    <lastmod>2023-07-07T13:15:39.858Z</lastmod>
+    <lastmod>2023-07-08T06:09:11.077Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/forecasting-with-decision-trees-and-random-forests.html</loc>
-    <lastmod>2023-07-07T13:15:41.900Z</lastmod>
+    <lastmod>2023-07-08T06:09:13.007Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/a-gaussian-process-model-for-heteroscedasticity.html</loc>
-    <lastmod>2023-07-07T13:15:43.968Z</lastmod>
+    <lastmod>2023-07-08T06:09:14.893Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/why-i-prefer-probabilistic-forecasts-hitting-time-probabilities.html</loc>
-    <lastmod>2023-07-07T13:15:46.145Z</lastmod>
+    <lastmod>2023-07-08T06:09:17.044Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/bayesian-machine-learning-and-julia-are-a-match-made-in-heaven.html</loc>
-    <lastmod>2023-07-07T13:15:49.055Z</lastmod>
+    <lastmod>2023-07-08T06:09:19.946Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/posts/when-is-bayesian-machine-learning-actually-useful.html</loc>
-    <lastmod>2023-07-07T13:15:50.708Z</lastmod>
+    <lastmod>2023-07-08T06:09:21.492Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/index.html</loc>
-    <lastmod>2023-07-07T13:15:53.038Z</lastmod>
+    <lastmod>2023-07-08T06:09:23.875Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notes/simple_inequalities.html</loc>
-    <lastmod>2023-07-07T13:15:54.003Z</lastmod>
+    <lastmod>2023-07-08T06:09:24.750Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notes/bnn_gp_limit.html</loc>
-    <lastmod>2023-07-07T13:15:54.861Z</lastmod>
+    <lastmod>2023-07-08T06:09:25.562Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks/Probabilistic Forecasts with Random Forests.html</loc>
-    <lastmod>2023-07-07T13:15:56.128Z</lastmod>
+    <lastmod>2023-07-08T06:09:26.803Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks/TimeVaryingCoefficients.html</loc>
-    <lastmod>2023-07-07T13:15:57.522Z</lastmod>
+    <lastmod>2023-07-08T06:09:28.303Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks/Julia HMM.html</loc>
-    <lastmod>2023-07-07T13:15:58.614Z</lastmod>
+    <lastmod>2023-07-08T06:09:29.728Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks/Julia Kalman Filter.html</loc>
-    <lastmod>2023-07-07T13:16:00.030Z</lastmod>
+    <lastmod>2023-07-08T06:09:31.271Z</lastmod>
   </url>
   <url>
     <loc>https://sarem-seitz.com/notebooks/Multivariate GARCH.html</loc>
-    <lastmod>2023-07-07T13:16:01.542Z</lastmod>
+    <lastmod>2023-07-08T06:09:32.877Z</lastmod>
   </url>
 </urlset>
