@@ -40,5 +40,7 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           script: |
             cd blog
+            docker stack rm blog
             docker-compose pull
+            sleep 10
             docker stack up -c docker-compose.yml blog
