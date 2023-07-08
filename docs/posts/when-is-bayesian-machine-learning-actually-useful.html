@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sarem">
+<meta name="dcterms.date" content="2022-01-22">
+<meta name="description" content="Personal thoughts about a somewhat controversial paradigm.">
+
+<title>Sarem Seitz - When is Bayesian Machine Learning actually useful?</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Sarem Seitz</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">More</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-more">    
+        <li>
+    <a class="dropdown-item" href="../notebooks.html" rel="" target="">
+ <span class="dropdown-text">Notebooks</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../notes.html" rel="" target="">
+ <span class="dropdown-text">Notes</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/SaremS" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/sarem_seitz" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../index.xml" rel="" target=""><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">When is Bayesian Machine Learning actually useful?</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Bayesian</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sarem </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 22, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#your-frequentist-model-is-probably-already-bayesian" id="toc-your-frequentist-model-is-probably-already-bayesian" class="nav-link" data-scroll-target="#your-frequentist-model-is-probably-already-bayesian">Your frequentist model is probably already Bayesian</a></li>
+  <li><a href="#the-price-of-bayesian-machine-learning-in-the-real-world" id="toc-the-price-of-bayesian-machine-learning-in-the-real-world" class="nav-link" data-scroll-target="#the-price-of-bayesian-machine-learning-in-the-real-world">The price of Bayesian Machine Learning in the real world</a></li>
+  <li><a href="#when-does-bayesian-machine-learning-actually-make-sense" id="toc-when-does-bayesian-machine-learning-actually-make-sense" class="nav-link" data-scroll-target="#when-does-bayesian-machine-learning-actually-make-sense">When does Bayesian Machine Learning actually make sense?</a></li>
+  <li><a href="#bayesian-deep-learning-light-with-mc-dropout" id="toc-bayesian-deep-learning-light-with-mc-dropout" class="nav-link" data-scroll-target="#bayesian-deep-learning-light-with-mc-dropout">Bayesian Deep Learning light with MC dropout</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>When it comes to Bayesian Machine Learning, you likely either love it or prefer to stay at a safe distance from anything Bayesian. Given that current state-of-the-art models hardly ever mention Bayes at all, there is probably at least some rationale behind the latter.</p>
+<p>On the other hand, many high profile research groups are have been working on Bayesian Machine Learning tools for decades. And they still do.</p>
+<p>Thus, it is rather unlikely that this field is complete quackery either. As often in life, the truth lies probably somewhere between the two extremes. In this article, I want to share my view on the titled question and point out when Bayesian Machine Learning can be helpful.</p>
+<p>To avoid confusion, let us briefly define what Bayesian Machine Learning means in the context of this article:</p>
+<blockquote class="blockquote">
+<p><em>“The Bayesian framework for machine learning states that you start out by enumerating all reasonable models of the data and assigning your prior belief P(M) to each of these models. Then, upon observing the data D, you evaluate how probable the data was under each of these models to compute P(D|M).”</em> - <a href="http://mlg.eng.cam.ac.uk/zoubin/bayesian.html?ref=sarem-seitz.com#:~:text=The%20Bayesian%20framework%20for%20machine,P(D%7CM)."><strong>Zoubin Ghahramani</strong></a></p>
+</blockquote>
+<p>Less formally, we apply tools and frameworks from <a href="https://en.wikipedia.org/wiki/Bayesian_statistics?ref=sarem-seitz.com">Bayesian statistics</a> to Machine Learning models. I will provide some references at the end, in case you are not familiar with Bayesian statistics yet.</p>
+<p>Also, our discussion will essentially equate Machine Learning with neural networks and differentiable models in general (particularly Linear Regression). Since Deep Learning is currently the cornerstone of modern Machine Learning, this appears to be a fair approach.</p>
+<p>As a final disclaimer, we will differentiate between frequentist and Bayesian Machine Learning. The former includes the standard ML methods and loss functions that you are probably already familiar with.</p>
+<p>Finally, the fact that ‘Bayesian’ is written in uppercase but ‘frequentist’ is not has no judgemental meaning.</p>
+<p>Now, let us begin with a surprising result:</p>
+</section>
+<section id="your-frequentist-model-is-probably-already-bayesian" class="level2">
+<h2 class="anchored" data-anchor-id="your-frequentist-model-is-probably-already-bayesian">Your frequentist model is probably already Bayesian</h2>
+<p>This statement might sound surprising and odd. However, there is a neat connection between the Bayesian and frequentist learning paradigm.</p>
+<p>Let’s start with Bayes’ formula <span class="math display">\[
+\begin{align}
+p(\theta \mid D)=\frac{p(D \mid \theta) p(\theta)}{p(D)}\label{eq1}\tag{1}
+\end{align}
+\]</span> and apply it to a Bayesian Neural Network: <span class="math display">\[
+\begin{align}
+&amp;\theta: \text{Network weights}\\
+&amp;D : \text{Dataset}\\
+&amp;p(\theta) : \text{Prior distribution over network weights}\\
+&amp;p(D \mid \theta) : \text{Likelihood function}\\
+\end{align}
+\]</span> As an illustrative example, we could have <span class="math display">\[
+p(D \mid \theta)=\prod_{i=1}^N \mathcal{N}\left(y_i \mid f_\theta\left(X_i\right), \sigma^2\right)\tag{2}\label{2}
+\]</span> i.e.&nbsp;the network output defines the mean of the target variable which, presumably, follows a Normal distribution. For the prior over the network weights - let’s presume we have K weights in total - we might choose <span class="math display">\[
+p(\theta) \sim \prod_{k=1}^K \mathcal{N}\left(\theta_k \mid 0, \eta^2\right) \tag{3}\label{3}
+\]</span> The setup with (<span class="math inline">\(\ref{2}\)</span>) and (<span class="math inline">\(\ref{3}\)</span>) is fairly standard for Bayesian Neural Networks. Finding a posterior weight distribution for (<span class="math inline">\(\ref{1}\)</span>) turns out to be futile in any reasonable setting for Bayesian Networks. This is nothing new for Bayesian models either.</p>
+<p>We now have a few options to deal with this issue, e.g.&nbsp;<a href="https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo?ref=sarem-seitz.com">MCMC</a>, <a href="https://en.wikipedia.org/wiki/Variational_Bayesian_methods?ref=sarem-seitz.com">Variational Bayes</a> or <a href="https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation?ref=sarem-seitz.com">Maximum a-posteriori estimation</a> (MAP). Technically, the latter only gives us a point estimate for the posterior maximum, not the full posterior distribution: <span class="math display">\[
+\begin{aligned}
+&amp; \theta^{M A P}=\operatorname{argmax}_\theta p(\theta \mid D) \\
+= &amp; \operatorname{argmax}_\theta \frac{p(D \mid \theta) p(\theta)}{p(D)}
+\end{aligned}
+\]</span> Given that a probability density is strictly positive over its domain, we can introduce logarithms: <span class="math display">\[
+\begin{aligned}
+&amp; \theta^{\text {MAP }}=\operatorname{argmax}_\theta \log p(\theta \mid D) \\
+= &amp; \operatorname{argmax}_\theta[\log p(D \mid \theta)+\log p(\theta)-\log p(D)] \\
+= &amp; \operatorname{argmax}_\theta[\log p(D \mid \theta)+\log p(\theta)]
+\end{aligned}\label{4}\tag{4}
+\]</span> Since the last summand does not depend on the model parameters, it does not affect the argmax. Hence, we can leave it out.</p>
+<section id="from-bayesian-map-to-regularized-mse" class="level3">
+<h3 class="anchored" data-anchor-id="from-bayesian-map-to-regularized-mse">From Bayesian MAP to regularized MSE</h3>
+<p>The purpose of equations (<span class="math inline">\(\ref{2}\)</span>) and (<span class="math inline">\(\ref{3}\)</span>) was only an illustrative one. Let us replace likelihood and prior with the following: <span class="math display">\[
+\begin{gather}
+p(D \mid \theta)=\prod_{i=1}^N \frac{1}{Z_1} e^{-\left(f_\theta\left(x_i\right)-y_i\right)^2}\label{5}\tag{5} \\
+p(\theta)=\prod_{k=1}^K \frac{1}{Z_2} e^{-\left(\frac{\theta_k}{\lambda}\right)^2}, \lambda&gt;0\label{6}\tag{6}
+\end{gather}
+\]</span> The Z-terms are normalization constants whose sole purpose is to yield valid probability densities.</p>
+<p>Now we can plug (<span class="math inline">\(\ref{5}\)</span>) and (<span class="math inline">\(\ref{6}\)</span>) into (<span class="math inline">\(\ref{4}\)</span>): <span class="math display">\[
+\begin{aligned}
+\theta^{\text {MAP }}&amp;=\operatorname{argmax}_\theta\left[\log \prod_{i=1}^N \frac{1}{Z_1} e^{-\left(f_\theta\left(x_i\right)-y_i\right)^2}+\log \prod_{k=1}^K \frac{1}{Z_2} e^{-\left(\frac{\theta_k}{\lambda}\right)^2}\right] \\
+&amp;=  \operatorname{argmax}_\theta\left[\sum_{i=1}^N \log \frac{1}{Z_1} e^{-\left(f_\theta\left(x_i\right)-y_i\right)^2}+\sum_{k=1}^K \log \frac{1}{Z_2} e^{-\left(\frac{\theta_k}{\lambda}\right)^2}\right] \\
+&amp;=  \operatorname{argmax}_\theta\left[-N \log Z_1-\sum_{i=1}^N\left(f_\theta\left(x_i\right)-y_i\right)^2-K \log Z_2-\sum_{k=1}^K\left(\frac{\theta_k}{\lambda}\right)^2\right] \\
+&amp;=  \operatorname{argmax}_\theta\left[-\sum_{i=1}^N\left(f_\theta\left(x_i\right)-y_i\right)^2-\frac{1}{\lambda^2} \sum_{k=1}^K \theta_k^2\right]
+\end{aligned}
+\]</span> As the maximum of a function is equal to the minimum of the negative function, we can write <span class="math display">\[
+\begin{aligned}
+\theta^{\text {MAP }}&amp;=\operatorname{argmin}_\theta\left[\sum_{i=1}^N\left(f_\theta\left(x_i\right)-y_i\right)^2+\frac{1}{\lambda^2}\|\theta\|_2^2\right] \\
+&amp;=  \operatorname{argmin}_\theta\left[\frac{1}{N} \sum_{i=1}^N\left(f_\theta\left(x_i\right)-y_i\right)^2+\frac{1}{N \lambda^2}\|\theta\|_2^2\right] \\
+&amp;=  \operatorname{argmin}_\theta M S E\left(f_\theta(X), y\right)+\tilde{\lambda}\|\theta\|_2^2
+\end{aligned}
+\]</span> The final term is nothing more than the standard MSE-objective with regularization. Hence, a regularized MSE objective is equivalent to a Bayesian MAP objective, given specific prior and likelihood.</p>
+<p>If you reverse the above, you can find a prior-likelihood pair for almost any frequentist loss function. However, the frequentist objective typically only point you a point solution.</p>
+<p>The Bayesian method, on the other hand, gives you a full posterior distribution with uncertainty intervals on top. Using <a href="https://en.wikipedia.org/wiki/Prior_probability?ref=sarem-seitz.com#Uninformative_priors">uninformative prior distributions</a> you can also remove the regularization term if necessary. We won’t cover a derivation here, however.</p>
+</section>
+</section>
+<section id="the-price-of-bayesian-machine-learning-in-the-real-world" class="level2">
+<h2 class="anchored" data-anchor-id="the-price-of-bayesian-machine-learning-in-the-real-world">The price of Bayesian Machine Learning in the real world</h2>
+<p>So, in theory, Bayesian Machine Learning yields a more complete picture than the frequentist approach. The caveat however is the intractability of the posterior distribution and thus the need to approximate or estimate it.</p>
+<p>Both approximation and estimation, however, inevitably lead to a loss in precision. Take for example the popular <a href="https://www.sarem-seitz.com/when-is-bayesian-machine-learning-actually-useful/#:~:text=So%2C%20in%20theory,don%27t%20understand%20everything%3A">variational inference approach for Bayesian Neural Networks</a>. In order to optimize the model, we need to approximate a so-called ELBO-objective by sampling from the variational distribution.</p>
+<p>The usual ELBO-objective looks like this - don’t worry if you don’t understand everything: <span class="math display">\[
+\begin{equation}
+ELBO=\mathbb{E}_{q(\theta)}[p(D \mid \theta)]+K L(q(\theta) \| p(\theta)) \label{7}\tag{7}
+\end{equation}
+\]</span> Our goal is to either maximize (<span class="math inline">\(\ref{7}\)</span>) or minimize its negative. However, the expectation term is typically not intractable. The easiest solution to this issue is the application of the <a href="https://gregorygundersen.com/blog/2018/04/29/reparameterization/?ref=sarem-seitz.com">reparameterization trick</a>. This allows us to estimate the ELBO via <span class="math display">\[
+\nabla_\theta E \hat{L B O}=\frac{1}{M} \sum_{m=1}^M \nabla_\theta p\left(D \mid g_\theta\left(\epsilon_m\right)\right)+\nabla_\theta K L(q(\theta) \| p(\theta))
+\]</span> The linearity of the gradient operation then allows us to estimate the gradient of (<span class="math inline">\(\ref{7}\)</span>) via: <span class="math display">\[
+E \hat{L B O}=\frac{1}{M} \sum_{m=1}^M p\left(D \mid g_\theta\left(\epsilon_m\right)\right)+K L(q(\theta) \| p(\theta)) \label{8}\tag{8}
+\]</span> With this formula, we are basically sampling M gradients from a reparametrized distribution. Thereafter, we use those samples to calculate an ‘average’ gradient.</p>
+<section id="unbiased-gradient-estimation-for-the-elbo" class="level3">
+<h3 class="anchored" data-anchor-id="unbiased-gradient-estimation-for-the-elbo">Unbiased gradient estimation for the ELBO</h3>
+<p>As demonstrated in the landmark paper by <a href="https://arxiv.org/abs/1312.6114?ref=sarem-seitz.com">Kingma and Welling (2013)</a>, we have <span class="math display">\[
+\mathbb{E}\left[\nabla_\theta \hat{ELBO}\right]=\nabla_\theta E L B O \label{9}\tag{9}
+\]</span> In essence, equation (<span class="math inline">\(\ref{9}\)</span>) tells us that our sampling based gradient is, on average, equal to the true gradient. The problem with (<span class="math inline">\(\ref{9}\)</span>) is that we don’t know anything about the higher order statistical moments of sampled gradient.</p>
+<p>For example, our estimate might have a prohibitively large variance. Thus, while we gradient descend in the correct direction on average, we are doing so unreasonably inefficiently.</p>
+<p>The additional randomness due to resampling also makes it difficult to find the right stopping time for gradient descent. Add that to the problem of non-convex loss-functions and your chances of underperforming against a non-Bayesian network are fairly high.</p>
+<p>In summary, the true posterior in a Bayesian world could give us a more complete picture about the optimal parameters. Since we need to resort to approximation however, we most likely end up with worse performance than with the standard approach.</p>
+</section>
+</section>
+<section id="when-does-bayesian-machine-learning-actually-make-sense" class="level2">
+<h2 class="anchored" data-anchor-id="when-does-bayesian-machine-learning-actually-make-sense">When does Bayesian Machine Learning actually make sense?</h2>
+<p>The above considerations beg the question of whether you want to even use Bayesian Machine Learning at all. Personally, I see two particular situations where this could be the case. Keep in mind, that what follows are rules of thumb. The actual decision for or against Bayesian Machine Learning should be based on the specific problem at hand.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/when-is-bayesian-machine-learning-actually-useful/bayesianML_decisiontree.png" class="img-fluid figure-img" alt="When is Bayesian Machine Learning actually useful? A simplistic decision tree for guidance - always adapt to your specific problem."></p>
+<figcaption class="figure-caption">When is Bayesian Machine Learning actually useful? A simplistic decision tree for guidance - always adapt to your specific problem.</figcaption>
+</figure>
+</div>
+<section id="small-datasets-and-informative-prior-knowledge" class="level3">
+<h3 class="anchored" data-anchor-id="small-datasets-and-informative-prior-knowledge">Small datasets and informative prior knowledge</h3>
+<p>Let us move back to the regularized MSE derivation from before. Our objective was <span class="math display">\[
+\operatorname{argmax}_\theta\left[\sum_{i=1}^N \log \frac{1}{Z_1} e^{-\left(f_\theta\left(x_i\right)-y_i\right)^2}+\sum_{k=1}^K \log \frac{1}{Z_2} e^{-\left(\frac{\theta_k}{\lambda}\right)^2}\right]
+\]</span> There is a clear tradeoff between the size of the dataset, <span class="math inline">\(N\)</span>, and the amount of model parameters, <span class="math inline">\(K\)</span>. For sufficiently large datasets, the prior on the right side becomes irrelevant for the MAP solution and vice-versa. This is also a key property for posterior inference in general.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/when-is-bayesian-machine-learning-actually-useful/posteriorprop.png" class="img-fluid figure-img" alt="Figurative behaviour of the posterior distribution. More data makes the posterior a closer fit to the data. Less data makes it more and more similar to the prior distribution."></p>
+<figcaption class="figure-caption">Figurative behaviour of the posterior distribution. More data makes the posterior a closer fit to the data. Less data makes it more and more similar to the prior distribution.</figcaption>
+</figure>
+</div>
+<p>When the dataset is small in relation to the amount of model parameters, the posterior distribution will closely resemble the prior. Thus, if the prior distribution contains sensible information about the problem, we can mitigate the lack of data to some extent.</p>
+<p>Take for example a plain linear regression model. Depending on the signal-to-noise ratio, a lot of data might be necessary before the parameters converge to the ‘best’ value. If you have a well reasoned prior distribution about that ‘best’ solution, your model might actually converge faster.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/when-is-bayesian-machine-learning-actually-useful/LinReg.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">1) Due to the small dataset and the random noise, the plain OLS regression line is off</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/when-is-bayesian-machine-learning-actually-useful/02LinRegPlusPrior.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">2) A well informed prior already produces a reasonable range before any model fit has occurred</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/when-is-bayesian-machine-learning-actually-useful/03LinRegPlusPost.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">3) After ‘training’, the Bayesian model produces a predictive mean regression line that comes much closer to the data generating regression line</figcaption>
+</figure>
+</div>
+<p>As a result, convergence to the ‘best’ solution could be even slower than without any prior at all. There are more tools in Bayesian statistics to mitigate this reasonable objection and I am keen to cover this topic in a future article.</p>
+<p>Also, even if you don’t want to go fully Bayesian, a MAP estimate could still be useful given high-quality prior knowledge.</p>
+</section>
+<section id="functional-priors-for-modern-bayesian-machine-learning" class="level3">
+<h3 class="anchored" data-anchor-id="functional-priors-for-modern-bayesian-machine-learning">Functional priors for modern Bayesian Machine Learning</h3>
+<p>A different issue might be the difficulty of expressing meaningful prior knowledge over neural network weights. If the model is a black-box, how could you actually tell it what to do? Apart from maybe some vague zero-mean Normal distribution over weights?</p>
+<p>One promising direction to solve this issue could be <a href="https://arxiv.org/pdf/1903.05779.pdf?ref=sarem-seitz.com">functional Bayes</a>. In that approach, we only tell the network what outputs we expect for given inputs, based on our prior knowledge. Hence, we only care about the posterior functions that our model can express. The exact parameter posterior distribution is only of secondary interest.</p>
+<p>In short, if you have only limited data but well-informed prior knowledge, Bayesian Machine Learning could actually help.</p>
+</section>
+<section id="importance-of-uncertainty-quantification" class="level3">
+<h3 class="anchored" data-anchor-id="importance-of-uncertainty-quantification">Importance of uncertainty quantification</h3>
+<p>For large datasets, the effect of your prior knowledge becomes less and less relevant. In that case, obtaining a frequentist solution might be fully sufficient and the superior approach. At some occasions however, the full picture - a.k.a. posterior uncertainty - could be important.</p>
+<p>Consider the case of making a medical decision based on some Machine Learning model. In addition, the model does not produce a final decision but rather supports doctors in their judgement. If Bayesian point accuracy is at least close to a frequentist equivalent, uncertainty output can serve as useful extra information.</p>
+<p>Presuming that the expert’s time is limited, they might want to take a closer look at highly uncertain model output. For output with low uncertainty, a quick sanity check might suffice. This of course requires the uncertainty estimates to be valid in the first place.</p>
+<p>Hence, the Bayesian approach comes at the additional cost of monitoring uncertainty performance as well. This should of course be taken into account when deciding whether to use a Bayesian model or not.</p>
+<p>Another example where Bayesian uncertainty can shine are time-series forecasting problems. If you model a time series in an autoregressive manner, i.e.&nbsp;you estimate <span class="math display">\[
+p\left(y_{t+1} \mid y_t, \ldots, y_{t-j}\right)
+\]</span> your model errors accumulate, the further ahead you are trying to forecast.</p>
+<p>Even for a highly simple autoregressive time-series such as <span class="math display">\[
+y_{t+1}=0.99 \cdot y_t+\epsilon, \quad \epsilon \sim \mathcal{N}(0,1)
+\]</span> a minuscule deviation in your estimated model <span class="math display">\[
+\hat{\mathbb{E}}\left[y_{t+1} \mid y_t\right]=1.02 \cdot y_t
+\]</span> can lead to catastrophic error accumulation in the long run: <span class="math display">\[
+\begin{aligned}
+&amp; \left(\mathbb{E}\left[y_{t+T} \mid y_t\right]-\hat{\mathbb{E}}\left[y_{t+T} \mid y_t\right]\right)^2 \\
+= &amp; \left(0.99^T \cdot y_t-1.02^T \cdot y_t\right)^2 \\
+\rightarrow &amp; 1.02^{2 T} y^2
+\end{aligned}
+\]</span> A full posterior could give a much clearer picture of how other, similarly probable scenarios might play out. Even though the model might be wrong on average, we nevertheless get an idea of how different parameter estimates affect the forecast.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/when-is-bayesian-machine-learning-actually-useful/04BayesForecast.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Bayesian forecast (purple) with uncertainty vs.&nbsp;frequentist point forecast (red). Although the frequentist forecast is slightly more accurate in the long run, the Bayesian uncertainty interval correctly includes the realized mean trajectory.</figcaption>
+</figure>
+</div>
+<p>Finally, if the last paragraph has made you interested in trying out Bayesian Machine Learning, here is a great method to start with:</p>
+</section>
+</section>
+<section id="bayesian-deep-learning-light-with-mc-dropout" class="level2">
+<h2 class="anchored" data-anchor-id="bayesian-deep-learning-light-with-mc-dropout">Bayesian Deep Learning light with MC dropout</h2>
+<p>Luckily, it is nowadays not too costly to train a Bayesian model. Unless you are working with very big models, the increased computational demand of Bayesian inference should not be too problematic.</p>
+<p>One particularly straightforward approach to Bayesian inference is MC dropout. The latter was introduced by <a href="http://proceedings.mlr.press/v48/gal16.pdf?ref=sarem-seitz.com">Gal and Ghahramani</a> and has since become a fairly popular tool. In summary, the authors show that it is sensible to use Dropout during both training and inference of a model. In fact, this is proved to be equivalent to variational inference with a particular, Bernoulli-based, variational distribution.</p>
+<p>Hence, MC Dropout can be a great starting point to make your Neural Network Bayes-ish without requiring too much effort upfront.</p>
+<section id="pros-and-cons" class="level3">
+<h3 class="anchored" data-anchor-id="pros-and-cons">Pros and cons</h3>
+<p>On the one hand, MC dropout makes it quite straightforward to make an existing model Bayesian. You can simply re-train it with dropout and leave dropout turned on during inference. The samples you create that way can be seen as draws from the Bayesian posterior predictive distribution.</p>
+<p>On the other hand, the variational distribution in MC dropout is based on Bernoulli random variables. This should - in theory - make it an even less accurate approximation than the common Gaussian variational distribution. However, building and using a this model is quite simple, requiring only plain Tensorflow or Pytorch.</p>
+<p>Also, there has been some deeper criticism about the validity of the approach. There exists an interesting debate involving one of the authors <a href="https://twitter.com/ianosband/status/1014466510885216256?ref=sarem-seitz.com">here</a>.</p>
+<p>Whatever you make out of that criticism, MC Dropout can be a helpful baseline for more sophisticated methods. Once you get a hang of Bayesian Machine Learning, you can try to improve performance with more sophisticated model from there.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>I hope that this article has given you some insights on the usefulness of Bayesian Machine Learning. Certainly, it is no magic bullet and there are many occasions where it might not be the right choice. If you carefully weigh in the pros and cons though, Bayesian methods can be a highly useful tool.</p>
+<p>Also, I am happy to have a deeper discussion on the topic, either in the comments or via private channels.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p><strong>[1]</strong> Gelman, Andrew, et al.&nbsp;“Bayesian data analysis”. CRC press, 2013.</p>
+<p><strong>[2]</strong> Kruschke, John. “Doing Bayesian data analysis: A tutorial with R, JAGS, and Stan.” Academic Press, 2014.</p>
+<p><strong>[3]</strong> Sivia, Devinderjit, and John Skilling. “Data analysis: a Bayesian tutorial.” OUP Oxford, 2006.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sarem">
+<meta name="dcterms.date" content="2021-06-28">
+<meta name="description" content="How Gaussian Process regression can handle varying variance.">
+
+<title>Sarem Seitz - A Gaussian Process model for heteroscedasticity</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Sarem Seitz</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">More</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-more">    
+        <li>
+    <a class="dropdown-item" href="../notebooks.html" rel="" target="">
+ <span class="dropdown-text">Notebooks</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../notes.html" rel="" target="">
+ <span class="dropdown-text">Notes</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/SaremS" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/sarem_seitz" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../index.xml" rel="" target=""><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">A Gaussian Process model for heteroscedasticity</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Bayesian</div>
+                <div class="quarto-category">Gaussian Processes</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sarem </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 28, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#problem-definition" id="toc-problem-definition" class="nav-link" data-scroll-target="#problem-definition">Problem definition</a></li>
+  <li><a href="#the-model" id="toc-the-model" class="nav-link" data-scroll-target="#the-model">The model</a></li>
+  <li><a href="#a-quick-example-using-julia" id="toc-a-quick-example-using-julia" class="nav-link" data-scroll-target="#a-quick-example-using-julia">A quick example using Julia</a></li>
+  <li><a href="#going-further" id="toc-going-further" class="nav-link" data-scroll-target="#going-further">Going further</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>A common phenomenon when working on continuous regression problems is the non-constant residual variance, also known as heteroscedasticity. While <a href="https://en.wikipedia.org/wiki/Heteroscedasticity?ref=sarem-seitz.com">heteroscedasticity</a> is often seen in Statistics and Econometrics, it doesn’t seem to receive as much attention in mainstream Machine Learning and Data Science literature.</p>
+<p>Although predicting the mean via MSE-minimisation is often sufficient and more pragmatic, a proper treatment of the variance can be helpful at times. See for example this past blog post of mine for more thoughts on this topic.</p>
+<p>In this article I want to show an example of how we can use Gaussian Processes to model heteroscedastic data. Since explaining every theoretical aspect would go far beyond the scope of this post, I recommend reading the references if you are interested in such models. First, let us start with a brief problem definition.</p>
+</section>
+<section id="problem-definition" class="level2">
+<h2 class="anchored" data-anchor-id="problem-definition">Problem definition</h2>
+<p>At the heart of non-constant variance models lies the assumption of some functional relation between the input data and the variance of the target variable. Presuming also a Gaussian target variable, we can construct the following probabilistic setup:</p>
+<p><span class="math display">\[y\sim\mathcal{N}\left(m(X),\sigma^2(X)\right)\]</span></p>
+<p>Put plainly, given some input data, the corresponding target should be Gaussian with mean and variance being arbitrary functions of our inputs. Since our focus today is on the variance, let us simplify things a little with a zero-mean function, i.e.</p>
+<p><span class="math display">\[y\sim\mathcal{N}\left(0,\sigma^2(X)\right)\]</span></p>
+<p>Our task is now to find a suitable function for sigma squared.</p>
+<p>If, ex-ante, we don’t know much about our target function, whatever model we come up with should account for our uncertainty about the actual functional form of sigma squared. This is also known as <a href="http://www.ce.memphis.edu/7137/PDFs/Abrahamson/C05.pdf?ref=sarem-seitz.com">epistemic uncertainty</a> and one of the main considerations in <a href="https://algorithmia.com/blog/bayesian-machine-learning?ref=sarem-seitz.com">Bayesian Machine Learning</a>. In simple terms, we now don’t expect that a single model would best describe our target function anymore.</p>
+<p>Instead, a — possibly infinitely large — set of models is considered and our goal is to place a probability distribution (a.k.a. posterior distribution) on this set such that those models that best describe the data (a.k.a. likelihood) given the assumptions we made (a.k.a. prior distributions) are the most likely ones.</p>
+<p>This is usually done in weight space by defining our set of models in an implicit manner via the sets of parameters that describe the models’ behaviour — probably the most famous example in Machine Learning are <a href="https://medium.com/neuralspace/bayesian-neural-network-series-post-1-need-for-bayesian-networks-e209e66b70b2?ref=sarem-seitz.com">Bayesian Neural Networks</a>. Another, more abstract approach is to directly work in function space, i.e.&nbsp;we now explicitly look for the most likely functions without requiring parameters to describe them in the first place.</p>
+<p>Since we are working in the Bayesian domain, this also means that prior and posterior distributions aren’t put over parameters anymore but also directly over functions. One of the most iconic frameworks for such modelling is <a href="https://distill.pub/2019/visual-exploration-gaussian-processes/?ref=sarem-seitz.com">Gaussian Process (GP) regression</a>.</p>
+<p>If this is a new concept to you and sounds confusing, I recommend to not worry about the underlying assumptions for now and just look at the formulas. One of the — by number of citations — most popular books on Gaussian Process models, Gaussian Processes for Machine Learning (GPML) provides a very clear introduction to the theoretical setup and is completely open source. To prevent this article from overbloating, I will not go too much into details and rather suggest you study the topics you don’t understand yourself.</p>
+</section>
+<section id="the-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-model">The model</h2>
+<p>Our goal will be to model the varying variance of the target variable through a GP, which looks as follows:</p>
+<p><span class="math display">\[y\sim \mathcal{N}(0,f^{exp}(X))\]</span></p>
+<p><span class="math display">\[f(\cdot)\sim \mathcal{GP}(0,k(\cdot,\cdot)+\nu\cdot\delta_{ij}),\,f^{exp}(X)=exp(f(X))\]</span></p>
+<p>This implies that the logarithm of our variance function is a GP — we need to squash the raw GP through an exponential to ensure that the variance will always be greater than zero. Any other function that maps the real line to the positive reals will do here but the exponential arguably the most popular one.</p>
+<p>The above also implies that the GP is actually a latent component of our model that we only observe indirectly from the data we collect. Finally, we presumed additional noise on the GP kernel via the delta summand which makes the model more stable in practice.</p>
+<p>We can then derive the posterior distribution derived via Bayes’ theorem as follows:</p>
+<p><span class="math display">\[p(f|X,y)=\frac{\mathcal{N}(y|0,f^{exp}(X))\cdot\mathcal{GP}(f|0,k(\cdot,\cdot)+\nu^2\cdot\delta_{ij}))}{p(y|X)}\]</span></p>
+<p>While it is possible to derive the left-hand side in closed form for some basic GP models, we cannot do so in our case. Instead we will apply <a href="https://cedar.buffalo.edu/~srihari/CSE574/Chap4/4.4-Laplace.pdf?ref=sarem-seitz.com">Laplace Approximation</a> and approximate it through a synthetic multivariate Normal</p>
+<p><span class="math display">\[p(f|X,y)\approx \mathcal{N}(f|\hat{f},A)\]</span></p>
+<p>The exact steps for Laplace Approximation are explained in <a href="http://www.gaussianprocess.org/gpml/chapters/RW3.pdf?ref=sarem-seitz.com">Chapter 3 of the GPML book</a> for a binary classification model and we only need to adjust the approach to our model.</p>
+<p>In summary, the mean parameter of our approximation should match the mode of the posterior, while its covariance matrix is the negative inverse of the Hessian matrix of our data log-likelihood function. We have:</p>
+<p><span class="math display">\[\hat{f}=argmax_f \log\mathcal{N}(y|0,f^{exp}(X))+\log\mathcal{GP}(f|0,k(\cdot,\cdot)+\nu^2\cdot\delta_{ij}))\]</span></p>
+<p><span class="math display">\[A^{-1}=-\nabla^2 \log \mathcal{N}(y|0,f^{exp}(X))\]</span></p>
+<p>The first equation is derived from the fact that the denominator of the posterior formula does not depend on our target and by monotonicity of the logarithm function. The latter equation is derived from a second-order Taylor-expansion around the maximum of the posterior function.</p>
+<p>To find the approximate mean and optimal kernel hyper-parameters for some example data later on, we will plug in the whole loss into an automatic differentiation package and let the computer do the rest. For the covariance matrix of our approximation, we need to actually calculate the Hessian matrix.</p>
+<p>A common simplification for GP models is the assumption of independent observations of the target variable given a realisation of the latent GP:</p>
+<p><span class="math display">\[p(y|f)=\prod_{i=1}^N p(y_i|f)\]</span></p>
+<p>This allows us to simplify the Hessian matrix to be zero everywhere, except for its diagonal which is the second-order derivative of the log-likelihood function with respect to the GP:</p>
+<p><span class="math display">\[H_{ii}=\frac{\partial^2}{\partial f_i^2}\log p(y_i|f_i)\]</span></p>
+<p>The right-hand side can be derived by differentiating the standard Gaussian log-likelihood twice with respect to the variance while accounting for our exponential transform:</p>
+<p><span class="math display">\[\begin{gathered}
+\frac{\partial^2}{\partial f_i^2}\log p(y_i|f_i)\\
+=\frac{\partial}{\partial f_i} \frac{\partial}{\partial f_i}\log p(y_i|f_i)\\
+=\frac{\partial}{\partial f_i} \frac{\partial}{\partial f_i}\left( -0.5 \log (2\pi)-0.5f_i - 0.5\frac{y_i^2}{exp(f_i)}\right)\\
+=\frac{\partial}{\partial f_i} \left(-0.5 + 0.5\frac{y_i^2}{exp(f_i)}\right)\\
+=- 0.5\frac{y_i^2}{exp(f_i)}
+\end{gathered}
+\]</span></p>
+<p>Which yields</p>
+<p><span class="math display">\[H_{ii}=- 0.5\frac{y_i^2}{exp(f_i)}\]</span></p>
+<p>and</p>
+<p><span class="math display">\[A_{ii}=2\cdot\frac{exp(f_i)}{y_i^2}\]</span></p>
+<p>Finally, we need to derive the so-called posterior predictive distribution i.e.&nbsp;our predictions for new, unobserved inputs:</p>
+<p><span class="math display">\[p(y^*|X^*,X,Y)\]</span></p>
+<p>I will only state the results from <a href="http://www.gaussianprocess.org/gpml/chapters/RW3.pdf?ref=sarem-seitz.com">GPML, chapter 3</a> for our setup, without the preceding derivations. First, we need to calculate the posterior predictive distribution for the latent GP which, using our approximation from above, is yet another GP:</p>
+<p><span class="math display">\[p(f^*|X^*,X,Y)=\mathcal{GP}(f^*|\mu^*,S^*)\]</span></p>
+<p><span class="math display">\[\mu^*=K_{*N}K_{NN}^{-1}\hat{f}\]</span></p>
+<p><span class="math display">\[S^*=K_{**}-K_{*N}(K_{NN}+A)^{-1}K_{*N}^T\]</span></p>
+<p>where the K-variables denote the kernel covariance gram-matrices for training and evaluation dataset and the kernel cross-covariance matrix between training and evaluation datasets. If you are familiar with GP-regression, you can see that the posterior mean and covariance terms are almost the same as in the standard case, except that we accounted for the mean and covariance of our Laplace approximation.</p>
+<p>Finally, we can derive the posterior predictive distribution for new data by marginalising out the GP posterior predictive function:</p>
+<p><span class="math display">\[p(y^*|X^*,X,Y)=\int p(y^*|f^*)p(f^*|\mu^*,S^*)df^* = \int\mathcal{N}(y^*|0,f^*)\mathcal{GP}(f^*|\mu^*,S^*)df^*\]</span></p>
+<p>This integral is also intractable — luckily, since we only want to evaluate the posterior predictive distribution, we can sample from the target distribution via Monte Carlo sampling.</p>
+<p>To demonstrate this approach in practice, I implemented a brief example in Julia.</p>
+</section>
+<section id="a-quick-example-using-julia" class="level2">
+<h2 class="anchored" data-anchor-id="a-quick-example-using-julia">A quick example using Julia</h2>
+<p>The data is a simple, 1D toy-example with 200 observations and generating distributions</p>
+<p><span class="math display">\[y\sim \mathcal{N}(0,sin^2(2 *X)),\quad X\sim\mathcal{U}(-3,3)\]</span></p>
+<p>i.e.&nbsp;the input variable is sampled uniformly between -3 and 3 and the target is drawn from a zero-mean Gaussian with periodic variance:</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Flux</span>, <span class="bu">Zygote</span>, <span class="bu">Distributions</span>, <span class="bu">DistributionsAD</span>, <span class="bu">FastGaussQuadrature</span>, <span class="bu">Plots</span>, <span class="bu">StatsPlots</span>, <span class="bu">KernelFunctions</span>, <span class="bu">LinearAlgebra</span>, <span class="bu">Random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Random</span>.<span class="fu">seed!</span>(<span class="fl">987</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sample_size <span class="op">=</span> <span class="fl">200</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">rand</span>(<span class="fl">1</span>,sample_size)<span class="op">.*</span><span class="fl">6</span> <span class="op">.-</span> <span class="fl">3</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Xline <span class="op">=</span> <span class="fu">Matrix</span>(<span class="fu">transpose</span>(<span class="fu">collect</span>(<span class="op">-</span><span class="fl">3.9</span><span class="op">:</span><span class="fl">0.1</span><span class="op">:</span><span class="fl">3.9</span>)[<span class="op">:</span>,<span class="op">:</span>])) <span class="co">#small, interpolated 1D grid for evalutaion</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Xline_train <span class="op">=</span> Xline[(Xline<span class="op">.&gt;=-</span><span class="fl">3</span>) <span class="op">.&amp;</span> (Xline<span class="op">.&lt;=</span><span class="fl">3</span>)]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fu">randn</span>(<span class="fl">1</span>,sample_size)<span class="op">.*</span><span class="fu">sin</span>.(<span class="fl">2</span> <span class="op">.*</span>X)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Xline_train,<span class="fu">zeros</span>(<span class="fu">length</span>(Xline_train));ribbon<span class="op">=</span>(<span class="fl">2</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span> <span class="op">.*</span>Xline_train)))</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(X[<span class="op">:</span>],y[<span class="op">:</span>],legend<span class="op">=:</span>none, fmt <span class="op">=</span> <span class="op">:</span>png,size<span class="op">=</span>(<span class="fl">1000</span>,<span class="fl">500</span>),color<span class="op">=:</span>red)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<p><img src="a-gaussian-process-model-for-heteroscedasticity_files/figure-html/cell-3-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>To fully define the GP, we also need to specify the kernel function — here I chose a standard Square-Exponential (SE) kernel plus the already mentioned additive noise term, i.e.</p>
+<p><span class="math display">\[k(x,x') = s\cdot\exp\left(\frac{(x-x')^2}{l}\right) + \nu\delta_{xx'}\]</span></p>
+<p>where all three hyper-parameters need to be positive. We now have all the formulas we need to define the necessary functions and structs (Julia’s counterpart to classes in object oriented languages)</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">mutable struct</span> SEKernel <span class="op">&lt;:</span><span class="dt"> KernelFunctions.Kernel</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    l_log</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    s_log</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>Flux.<span class="pp">@functor</span> SEKernel</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">SEKernel</span>() <span class="op">=</span> <span class="fu">SEKernel</span>(<span class="fu">ones</span>(<span class="fl">1</span>,<span class="fl">1</span>),<span class="fu">ones</span>(<span class="fl">1</span>,<span class="fl">1</span>))</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#using KernelFunctions.jl for the primitives, we specify the raw SE-kernel here - the noise term will be added in the full model </span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>KernelFunctions.<span class="fu">kernelmatrix</span>(m<span class="op">::</span><span class="dt">SEKernel</span>,x<span class="op">::</span><span class="dt">Matrix</span>,y<span class="op">::</span><span class="dt">Matrix</span>) <span class="op">=</span> <span class="fu">exp</span>.(m.s_log)[<span class="fl">1</span>,<span class="fl">1</span>]<span class="op">.*</span><span class="fu">exp</span>.(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                                                                    <span class="fu">-sum</span>(<span class="fu">exp</span>.(m.l_log)<span class="op">.*</span>(Flux.<span class="fu">unsqueeze</span>(x,<span class="fl">3</span>)<span class="op">.-</span>Flux.<span class="fu">unsqueeze</span>(y,<span class="fl">2</span>))<span class="op">.^</span><span class="fl">2</span>,dims<span class="op">=</span><span class="fl">1</span>)[<span class="fl">1</span>,<span class="op">:</span>,<span class="op">:</span>]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                                                                )</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>KernelFunctions.<span class="fu">kernelmatrix</span>(m<span class="op">::</span><span class="dt">SEKernel</span>,x<span class="op">::</span><span class="dt">Matrix</span>) <span class="op">=</span> KernelFunctions.<span class="fu">kernelmatrix</span>(m,x,x);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">mutable struct</span> HeteroscedasticityGPModel</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    kern</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    f_hat</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    nu_log</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>Flux.<span class="pp">@functor</span> HeteroscedasticityGPModel</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 'n' specifies the dimensionality or our Laplace Approximation - needs to be equal to the size of the training dataset</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">HeteroscedasticityGPModel</span>(n) <span class="op">=</span> <span class="fu">HeteroscedasticityGPModel</span>(<span class="fu">SEKernel</span>(),<span class="fu">zeros</span>(<span class="fl">1</span>,n),<span class="fu">ones</span>(<span class="fl">1</span>,<span class="fl">1</span>))</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># this is the log-likelihood term we need for calculating the optimal mean parameter of the Laplace Approximation - Zygote.jl and Flux.jl will be used for Autodiff </span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">loss</span>(m<span class="op">::</span><span class="dt">HeteroscedasticityGPModel</span>,y,X)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    _,N <span class="op">=</span> <span class="fu">size</span>(m.f_hat)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    K<span class="op">=</span> <span class="fu">kernelmatrix</span>(m.kern,X)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    likelihood_term <span class="op">=</span> <span class="fu">sum</span>(<span class="fu">llnormal</span>.(y[<span class="op">:</span>],<span class="fu">zeros</span>(N),m.f_hat[<span class="op">:</span>]))</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    prior_term <span class="op">=</span> Distributions.<span class="fu">logpdf</span>(<span class="fu">MvNormal</span>(<span class="fu">zeros</span>(N),K<span class="op">.+</span><span class="fu">Diagonal</span>(<span class="fu">ones</span>(N)<span class="op">.*</span><span class="fu">exp</span>.(m.nu_log)[<span class="fl">1</span>,<span class="fl">1</span>])),m.f_hat[<span class="op">:</span>])</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span>likelihood_term <span class="op">-</span> prior_term <span class="co">#negative since Flux.Optimise minimizes the target but we want to maximize it</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Manual derivation of log-likelihood and hessian diagonal of the log-likelihood with respect to f; the gradient is also included </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">llnormal</span>(x,m,s) <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> <span class="fu">log</span>(<span class="fl">2</span>. <span class="op">*</span> <span class="fl">3.14</span> <span class="op">*</span> <span class="fu">exp</span>(s)) <span class="op">-</span> <span class="fl">1</span> <span class="op">./</span>(<span class="fl">2</span> <span class="op">.*</span><span class="fu">exp</span>(s))<span class="fu">*</span>(x<span class="op">-</span>m)<span class="op">^</span><span class="fl">2</span>.</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">llnormgrad</span>(x,m,s) <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span> <span class="op">+</span> <span class="fl">0.5</span><span class="op">*</span><span class="fl">1</span><span class="op">/</span><span class="fu">exp</span>(s)<span class="fu">*</span>(x<span class="op">-</span>m)<span class="op">^</span><span class="fl">2</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">llnormhess</span>(x,m,s) <span class="op">=</span> <span class="op">-</span> <span class="fl">0.5</span><span class="op">/</span><span class="fu">exp</span>(s)<span class="fu">*</span>(x<span class="op">-</span>m)<span class="op">^</span><span class="fl">2</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#finite differences test to ensure that the formulas for the gradient and hessian diagonal are correct</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>eps <span class="op">=</span> <span class="fl">1e-10</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">abs</span>((<span class="fu">llnormal</span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>)<span class="fu">-llnormal</span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">-</span>eps))<span class="op">/</span>eps <span class="op">-</span> <span class="fu">llnormgrad</span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>)) <span class="op">&lt;</span> <span class="fl">1e-6</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">abs</span>((<span class="fu">llnormgrad</span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>)<span class="fu">-llnormgrad</span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">-</span>eps))<span class="op">/</span>eps <span class="op">-</span> <span class="fu">llnormhess</span>(<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">1</span>)) <span class="op">&lt;</span><span class="fl">1e-6</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> <span class="fu">HeteroscedasticityGPModel</span>(sample_size)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> Flux.<span class="fu">params</span>(model);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#test that the Zygote.jl gradients are actually working</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>Zygote.<span class="fu">gradient</span>(()<span class="fu">-&gt;loss</span>(model,y,X),params);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>opt <span class="op">=</span> <span class="fu">ADAM</span>(<span class="fl">0.01</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2500</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    grads <span class="op">=</span> Zygote.<span class="fu">gradient</span>(()<span class="fu">-&gt;loss</span>(model,y,X),params)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    Flux.Optimise.<span class="fu">update!</span>(opt,params,grads)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i<span class="op">%</span><span class="fl">250</span><span class="op">==</span><span class="fl">0</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">println</span>(<span class="fu">loss</span>(model,y,X))</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>248.54495027449855
+11.759623403151409
+-221.67423883166694
+-451.1514391636018
+-659.5369049784196
+-795.0349981998211
+-752.3599410064332
+-937.6992763973955
+-922.2646364618785
+-981.90093613224</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#calculate the posterior distribution of f evaluated at X_star</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>M,N <span class="op">=</span> <span class="fu">size</span>(model.f_hat)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>K<span class="op">=</span> <span class="fu">kernelmatrix</span>(model.kern,<span class="fu">hcat</span>(X,Xline))<span class="op">.+</span><span class="fu">Diagonal</span>(<span class="fu">exp</span>(model.nu_log[<span class="fl">1</span>,<span class="fl">1</span>])<span class="op">.*</span><span class="fu">ones</span>(<span class="fu">N+size</span>(Xline)[<span class="fl">2</span>]))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> <span class="fu">inv</span>(<span class="fu">-Diagonal</span>(<span class="fu">llnormhess</span>.(y[<span class="op">:</span>],<span class="fu">zeros</span>(N),model.f_hat[<span class="op">:</span>]))<span class="op">.+</span><span class="fu">Diagonal</span>(<span class="fu">ones</span>(sample_size)<span class="op">.*</span><span class="fl">1e-6</span>))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#kernel covariance matrices as </span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>K_NN <span class="op">=</span> K[<span class="fl">1</span><span class="op">:</span>sample_size,<span class="fl">1</span><span class="op">:</span>sample_size]</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>K_star_star <span class="op">=</span> K[sample_size<span class="op">+</span><span class="fl">1</span><span class="op">:</span><span class="kw">end</span>,sample_size<span class="op">+</span><span class="fl">1</span><span class="op">:</span><span class="kw">end</span>]</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>K_star_N <span class="op">=</span> K[sample_size<span class="op">+</span><span class="fl">1</span><span class="op">:</span><span class="kw">end</span>,<span class="fl">1</span><span class="op">:</span>sample_size]</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#posterior mean and covariance of the GP evaluated at `Xline`</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>mu_star <span class="op">=</span> model.<span class="fu">f_hat*inv</span>(K_NN<span class="op">.+</span><span class="fu">Diagonal</span>(<span class="fu">ones</span>(sample_size)<span class="op">.*</span><span class="fl">1e-6</span>))<span class="fu">*transpose</span>(K_star_N)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>S_star <span class="op">=</span> K_star_star<span class="op">.-</span> <span class="fu">K_star_N*inv</span>(K_NN<span class="op">.+</span><span class="fu">inv</span>(K_NN<span class="op">.+</span>A <span class="op">.+</span> <span class="fu">Diagonal</span>(<span class="fu">ones</span>(sample_size)<span class="op">.*</span><span class="fl">1e-6</span>)))<span class="fu">*transpose</span>(K_star_N)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#posterior probability distribution of f, evaluated at X_star</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>p_f_star <span class="op">=</span> <span class="fu">MvNormal</span>(mu_star[<span class="op">:</span>],<span class="fu">Symmetric</span>(S_star<span class="op">.+</span><span class="fu">Diagonal</span>(<span class="fu">ones</span>(<span class="fu">size</span>(Xline)[<span class="fl">2</span>])<span class="op">.*</span><span class="fl">1e-6</span>)));</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The resulting functional posterior predictive distribution after optimising the above kernel hyper-parameters and the Laplace Approximation looks as follows:</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Monte Carlo sampling from the posterior predictive distribution for y_star</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>mc_samples <span class="op">=</span> [<span class="fu">randn</span>(<span class="fu">size</span>(Xline)[<span class="fl">2</span>])<span class="op">.*</span><span class="fu">sqrt</span>.((<span class="fu">exp</span>.(<span class="fu">rand</span>(p_f_star)))) for _ <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100000</span>]</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>mc_sample_matrix <span class="op">=</span> <span class="fu">hcat</span>(mc_samples<span class="op">...</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#posterior predictive mean is zero by our model definition</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>posterior_predictive_mean <span class="op">=</span> <span class="fu">zeros</span>(<span class="fu">size</span>(Xline)[<span class="fl">2</span>])[<span class="op">:</span>]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>posterior_predictive_std <span class="op">=</span> <span class="fu">std</span>(mc_sample_matrix,dims<span class="op">=</span><span class="fl">2</span>)[<span class="op">:</span>]</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(Xline[:],posterior_predictive_mean,legend=:none,ribbon=(posterior_predictive_mean.-ci_90percent_lower, ci_90percent_upper.-posterior_predictive_mean), fmt = :png,size=(1000,500),</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#color=:green)</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Xline_train,<span class="fu">zeros</span>(<span class="fu">length</span>(Xline_train));ribbon<span class="op">=</span>(<span class="fl">2</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2</span> <span class="op">.*</span>Xline_train)))</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(Xline[<span class="op">:</span>],posterior_predictive_mean,legend<span class="op">=:</span>none,ribbon<span class="op">=</span><span class="fl">2</span> <span class="op">*</span> posterior_predictive_std, fmt <span class="op">=</span> <span class="op">:</span>png,size<span class="op">=</span>(<span class="fl">1000</span>,<span class="fl">500</span>), color<span class="op">=:</span>red)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#scatter!(X[:],y[:],color=:red)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<p><img src="a-gaussian-process-model-for-heteroscedasticity_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>To see what happens for data that lies outside of the range of our training data, the evaluation was performed on the interval. As you can see, the posterior predictive variance shows a sharp increase the further we look into the unknown.</p>
+<p>This is exactly what should happen under the influence of epistemic uncertainty. To some extent, a model can learn which functions describe the target function in close distance to the training data. On the other hand, the set of candidate functions that might equally well describe data outside our observations grows larger the farther we move away from the training data.</p>
+<p>Put simple, the less similar our test data is to the training data, the more uncertain we should be about our predictions. This uncertainty is expressed by the variance of the posterior predictive distribution — larger variance implies larger uncertainty.</p>
+<p>We can also see this quite well by comparing the posterior predictive density for an X that lies in the center of observed data vs.&nbsp;the posterior predictive density for an X rather outside that range:</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(mc_sample_matrix[<span class="fu">findall</span>(Xline[<span class="op">:</span>]<span class="op">.==</span><span class="fl">0</span>.)[<span class="fl">1</span>],<span class="op">:</span>],legend<span class="op">=:</span>none,color<span class="op">=:</span>red,lw<span class="op">=</span><span class="fl">4</span>),<span class="fu">density</span>(mc_sample_matrix[<span class="fu">findall</span>(Xline[<span class="op">:</span>]<span class="op">.==-</span><span class="fl">3.5</span>)[<span class="fl">1</span>],<span class="op">:</span>],legend<span class="op">=:</span>none,color<span class="op">=:</span>red,lw<span class="op">=</span><span class="fl">4</span>),</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>size<span class="op">=</span>(<span class="fl">1400</span>,<span class="fl">500</span>),fmt<span class="op">=:</span>png)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<p><img src="a-gaussian-process-model-for-heteroscedasticity_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>It is quite obvious that the posterior predictive density at -3.5 implies a much broader range of potential values for y than the posterior predictive density at zero. Being able to quantify such uncertainty is one of the most intriguing features of Bayesian Machine Learning and I can highly recommend to dive deeper into this vast topic.</p>
+</section>
+<section id="going-further" class="level2">
+<h2 class="anchored" data-anchor-id="going-further">Going further</h2>
+<p>It is quite obvious that the example we used was only a toy dataset and doesn’t yet prove anything about the real-world capabilities of the proposed model. If you are interested, feel free to use and modify the code and try the model on something more realistic.</p>
+<p>One potential application for such models would be financial time-series data which are quite well known to exhibit highly variable variance in periods of crisis. While GARCH models are often consider state-of-the-art here, a GP model might be an interesting alternative. Another possible improvement for general continuous regression problems would be to also model the data mean as a GP.</p>
+<p>A final word about scalability: Plain GP models like the one we discussed here are quite infamous for being infeasible for larger datasets. Luckily, many smart people have developed methods to solve these issues, at least to some extent. In case you are interested in such approaches, you can find an overview in <a href="http://gpss.cc/gpss19/slides/Dai2019.pdf?ref=sarem-seitz.com">these slides from the Gaussian Process Summer School 2019</a>.</p>
+<p>And that’s it for today. Thanks for reading this far and let me know in the comments if you have any questions or found any errors in this post</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p><strong>[1]</strong> RASMUSSEN, Carl Edward. Gaussian processes in machine learning. In: Summer school on machine learning. Springer, Berlin, Heidelberg, 2003.</p>
+<p><strong>[2]</strong> Bollerslev, Tim. Generalized autoregressive conditional heteroskedasticity. Journal of econometrics, 1986, 31. 3, p.&nbsp;307-327.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
