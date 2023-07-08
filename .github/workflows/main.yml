@@ -41,4 +41,4 @@ jobs:
           script: |
             cd blog
             docker-compose pull
-            docker stack up -c docker-compose.yml blog
+            docker stack up -c docker-compose.yml nginx
