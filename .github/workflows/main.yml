@@ -10,9 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
-    - name: "Install Quarto and render"
-      uses: pommevilla/quarto-render@main
     
     - name: Checkout repo
       uses: actions/checkout@v2.5.0 # Checking out the repo
