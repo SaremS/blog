@@ -5,6 +5,7 @@ project:
 website:
   title: "Sarem Seitz"
   site-url: 'https://sarem-seitz.com'
+  favicon: /images/static/logo.png
   navbar:
     right:
       - text: "Home"
