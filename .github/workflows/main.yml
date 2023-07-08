@@ -1,0 +1,25 @@
+name: Render and deploy
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - master
+
+jobs:
+  quarto-render-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: "Install Quarto and render"
+      uses: pommevilla/quarto-render@main
+      
+    - uses: actions/checkout@v2.5.0 # Checking out the repo
+
+    - name: Build and Publish latest Docker image
+      uses: VaultVulp/gp-docker-action@1.5.0
+      with:
+        github-token: ${{ secrets.PUSH_IMAGE_KEY }}     
+        image-name: blog
+        build-context: .
+        dockerfile: ./Dockerfile    
