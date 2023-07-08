@@ -12,8 +12,9 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: "Install Quarto and render"
-      uses: pommevilla/quarto-render@main
-      
+      uses: quarto-dev/quarto-actions/render@v2
+    
+    - name: Checkout repo
     - uses: actions/checkout@v2.5.0 # Checking out the repo
 
     - name: Build and Publish latest Docker image
