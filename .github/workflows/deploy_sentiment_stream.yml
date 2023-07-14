@@ -2,6 +2,8 @@ name: Deploy sentiment stream
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
     paths:
     - 'services/sentiment-stream/**'
     - '.github/workflows/deploy_sentiment_stream.yml'
