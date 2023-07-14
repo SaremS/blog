@@ -5,7 +5,9 @@ on:
     branches:
     - master
     paths:
-    - './services/python-stream/**'
+    - 'services/python-stream/**'
+    - '.github/workflows/deploy_python_stream.yml'
+
 
 jobs:
   build-and-publish:
@@ -20,8 +22,8 @@ jobs:
         with:
           github-token: ${{ secrets.PUSH_IMAGE_KEY }}     
           image-name: blog-python-stream
-          build-context: ./services/python-stream
-          dockerfile: ./services/python-stream/Dockerfile
+          build-context: services/python-stream
+          dockerfile: services/python-stream/Dockerfile
 
   #deploy:
   #  name: Deploy
