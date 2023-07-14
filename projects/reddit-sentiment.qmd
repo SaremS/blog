@@ -1,0 +1,9 @@
+---
+title: "RAW HTML CONTENT"
+format: html
+---
+
+```{=html}
+<div id="reddit-sentiment-widget"></div>
+<script src="/widgets/reddit-sentiment.js"></script>
+```
