@@ -1,0 +1,81 @@
+name: Deploy sentiment stream
+on:
+  workflow_dispatch:
+  push:
+    paths:
+    - 'services/sentiment-stream/**'
+    - '.github/workflows/deploy_sentiment_stream.yml'
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
+        working-directory: services/sentiment-stream
+        
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Cache venv
+        id: cache-venv
+        uses: actions/cache@v3
+        with: 
+          path: services/sentiment-stream/venv
+          key: ${{ runner.os }}-${{ hashFiles('sentiment-stream/requirements.txt') }}
+
+      - name: Create venv
+        if: steps.cache-venv.cache-hit != 'true'
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Cache model
+        id: cache-model
+        uses: actions/cache@v3
+        with: 
+          path: services/sentiment-stream/saved_model
+          key: ${{ runner.os }}-saved-model
+
+      - name: Run tests
+        run: |
+          source venv/bin/activate
+          python -m unittest discover
+
+
+
+  build-and-publish:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v2.5.0 # Checking out the repo
+
+      - name: Build and Publish latest Docker image
+        uses: VaultVulp/gp-docker-action@1.5.0
+        with:
+          github-token: ${{ secrets.PUSH_IMAGE_KEY }}     
+          image-name: sentiment-stream
+          build-context: ./services/sentiment-stream
+          dockerfile: ./services/sentiment-stream/Dockerfile
+          
+  #deploy:
+  #  name: Deploy
+  #  runs-on: ubuntu-latest
+  #  if: github.ref == 'refs/heads/master'
+  #  needs: build-and-publish
+  #  steps:
+  #  - name: executing remote ssh commands using password
+  #    uses: appleboy/ssh-action@v0.1.6
+  #    with:
+  #      host: ${{ secrets.DEPLOY_HOST }}
+  #      username: ${{ secrets.DEPLOY_USERNAME }}
+  #      password: ${{ secrets.DEPLOY_PASSWORD }}
+  #      port: ${{ secrets.DEPLOY_PORT }}
+  #      script: |
+  #        cd showcases
+  #        git pull origin master
+  #        docker-compose pull
+  #        export SENTIMENT_STREAM_NODE=${{ secrets.SENTIMENT_STREAM_NODE }}
+  #        export KAFKA_MIDDLEWARE_NODE=${{ secrets.KAFKA_MIDDLEWARE_NODE }}
+  #        docker stack up -c docker-compose.yml showcases
