@@ -24,7 +24,7 @@ export default function TitleSentimentCard({
   const minSentimentRound = sentiment.toFixed(4);
 
   return (
-    <Card sx={{ minHeight: 250 }} style={{ backgroundColor: color }}>
+    <Card sx={{ minHeight: 350 }} style={{ backgroundColor: color }}>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {header}

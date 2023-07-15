@@ -13,7 +13,7 @@ export default function TimeSeriesChart({ data }) {
   }
 
   const options = {
-    title: "15 minutes rolling sentiment score",
+    title: "Rolling sentiment",
     curveType: "function",
     legend: { position: "none" },
     animation: {
