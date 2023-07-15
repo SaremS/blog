@@ -11,6 +11,7 @@ on:
     - 'widgets/**'
     - 'data/**'
     - '**.qmd'
+    - '.github/workflows/main.yml'
 
 jobs:
   quarto-render-and-push:
