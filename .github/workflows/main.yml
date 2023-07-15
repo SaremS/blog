@@ -12,12 +12,25 @@ jobs:
     steps:
     - uses: actions/checkout@v2.5.0 # Checking out the repo
     
-    - name: Set up
+    - name: Set up quarto
       uses: quarto-dev/quarto-actions/setup@v2
       
     - name: Render
       uses: quarto-dev/quarto-actions/render@v2
       
+    - name: Set up React and build widgets
+      uses: actions/setup-node@v1
+      with:
+          node-version: 16.x
+          script: |
+            cd widgets
+            for d in */ ; do
+              cd $d
+              npm install 
+              npm run build:widget
+              cd ..
+            done
+    
     - name: Build and Publish latest Docker image
       uses: VaultVulp/gp-docker-action@1.5.0
       with:
