@@ -14,6 +14,7 @@ image: "/images/projects/reddit_sent_img.png"
 
 ## Rough explanation
 Three microservices:
+
 1. **[Comment streaming](https://github.com/SaremS/blog/tree/master/services/python-stream)** using Python and [PRAW](https://github.com/praw-dev/praw)
 2. **[Sentiment prediction](https://github.com/SaremS/blog/tree/master/services/sentiment-stream)** using Python and a [huggingface Transformer model](https://huggingface.co/)
 3. **[Middleware](https://github.com/SaremS/blog/tree/master/services/kafka-middleware)** to for connecting the frontend to the Kafka stream via websocket (using Rust+[tokio](https://tokio.rs/)
