@@ -5,6 +5,9 @@
 **/.cache/
 **/.parcel-cache/
 
+**/.ipynb_checkpoints/
+**/lightning_logs/
+
 **/.env
 
 .DS_Store

@@ -4,6 +4,12 @@ on:
   push:
     branches:
     - master
+    paths:
+    - 'notebooks/**'
+    - 'notes/**'
+    - 'projects/**'
+    - 'widgets/**'
+    - 'data/**'
 
 jobs:
   quarto-render-and-push:

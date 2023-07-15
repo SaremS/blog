@@ -1,0 +1,119 @@
+version: '3.7'
+
+networks:
+  kafka-zookeeper-network:
+    external: true
+  kafka-backend-network:
+    external: true
+  middleware-network:
+    external: true
+  frontend-network:
+    external: true
+
+services:
+  nginx:
+    image: 'ghcr.io/sarems/blog/blog:latest'
+    container_name: nginx
+    ports:
+      - '8181:80'
+    restart: unless-stopped
+    networks:
+      - middleware-network
+      - frontend-network
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+    depends_on:
+      - middleware
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - kafka-zookeeper-network
+    deploy:  
+      placement:  
+        constraints:  
+          - node.role==worker
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    ports:
+      - "29092:29092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_LOG_RETENTION_HOURS: 1
+    networks:
+      - kafka-zookeeper-network
+      - kafka-backend-network
+    restart: on-failure
+    deploy:  
+      placement:  
+        constraints:  
+          - node.role==worker
+
+  python-stream:
+    image: 'ghcr.io/sarems/blog/python-stream:latest'
+    container_name: python-stream
+    depends_on:
+      - kafka
+      - zookeeper
+    env_file: ./environment/.env.python.stream
+    restart: on-failure
+    networks:
+      - kafka-backend-network
+    deploy:  
+      placement:  
+        constraints:  
+          - node.role==worker
+  
+  sentiment-stream:
+    image: 'ghcr.io/sarems/blog/showcases-sentiment-stream:latest'
+    container_name: sentiment-stream
+    depends_on:
+      - kafka
+      - zookeeper
+      - python-stream
+    env_file: ./environment/.env.sentiment.stream
+    restart: on-failure
+    networks:
+      - kafka-backend-network
+    volumes:
+      - "/sentimenter/saved_model:/sentimenter/saved_model"
+    deploy:  
+      placement:  
+        constraints:  
+          - node.role==worker
+
+  middleware:
+    image: 'ghcr.io/sarems/blog/showcases-kafka-middleware:latest'
+    container_name: middleware
+    depends_on:
+      - kafka
+      - zookeeper
+      - python-stream
+    restart: on-failure
+    networks:
+      - kafka-frontend-network
+      - middleware-network
+    env_file: ./environment/.env.kafka.middleware
+    volumes:
+      - "/kafka-middleware/persist:/kafka-middleware/persist"
+    deploy:  
+      placement:  
+        constraints:  
+          - node.role==worker
+

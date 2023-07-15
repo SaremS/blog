@@ -1,9 +1,21 @@
 ---
-title: "RAW HTML CONTENT"
+title: "Live stream of comment sentiment for r/CryptoCurrency"
 format: html
 ---
+
+## Dashboard
 
 ```{=html}
 <div id="reddit-sentiment-widget"></div>
 <script src="/widgets/reddit-sentiment.js"></script>
 ```
+
+## Rough explanation
+Three microservices:
+1) **[Comment streaming](https://github.com/SaremS/blog/tree/master/services/python-stream)** using Python and [PRAW](https://github.com/praw-dev/praw)
+2) **[Sentiment prediction](https://github.com/SaremS/blog/tree/master/services/sentiment-stream)** using Python and a [huggingface Transformer model](https://huggingface.co/)
+3) **[Middleware](https://github.com/SaremS/blog/tree/master/services/kafka-middleware)** to for connecting the frontend to the Kafka stream via websocket (using Rust+[tokio](https://tokio.rs/)
+
+All services communicate event-driven via [Kafka](https://kafka.apache.org/).
+
+The [dashboard](https://github.com/SaremS/blog/tree/master/widgets/reddit-sentiment) is built using React, exported as a single `.js` file with [Parcel](https://parceljs.org/). Then, the `.js`-file can be loaded in an `html`-cell via Quarto Markdown.
