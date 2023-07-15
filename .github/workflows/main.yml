@@ -10,7 +10,7 @@ on:
     - 'projects/**'
     - 'widgets/**'
     - 'data/**'
-    - '*.qmd'
+    - '**.qmd'
 
 jobs:
   quarto-render-and-push:
