@@ -18,18 +18,19 @@ jobs:
     - name: Render
       uses: quarto-dev/quarto-actions/render@v2
       
-    - name: Set up React and build widgets
+    - name: Set up Node
       uses: actions/setup-node@v1
       with:
           node-version: 16.x
-          script: |
-            cd widgets
-            for d in */ ; do
-              cd $d
-              npm install 
-              npm run build:widget
-              cd ..
-            done
+    - name: Build widgets
+      run: |
+        cd widgets
+        for d in */ ; do
+          cd $d
+          npm install 
+          npm run build:widget
+          cd ..
+        done
     
     - name: Build and Publish latest Docker image
       uses: VaultVulp/gp-docker-action@1.5.0
