@@ -13,5 +13,3 @@ title-block-banner: true
 ---
 
 Showcases and experimental stuff.
-
-
