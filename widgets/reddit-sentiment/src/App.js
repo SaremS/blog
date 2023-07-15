@@ -44,7 +44,6 @@ function App() {
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
-        <h1>Streaming sentiment analysis of comments on r/CryptoCurrency</h1>
         <hr style={{ opacity: 0.5, marginBottom: "30px" }} />
         <Grid container spacing={2} alignItems="center" justifyContent="center">
           <Grid item xs={12} md={12}>
