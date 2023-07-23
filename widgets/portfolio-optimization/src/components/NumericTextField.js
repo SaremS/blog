@@ -17,16 +17,16 @@ export default function NumericTextField(id, state, changeStateFun) {
       id={id}
       size="small"
       label=""
-      inputProps={{ maxLength: maxLen }}
+      inputProps={{ maxLength: maxLen, style: {textAlign: "center"} }}
       onChange={(e) => changeStateFun(e)}
       defaultValue={state}
-      style={{ backgroundColor: bgcolor }}
+      style={{ backgroundColor: bgcolor, maxWidth:"65px" }}
     />
   );
 }
 
 function validateNumericInput(input) {
-  return /(^-?\d.\d\d*$)|(^-?\d$)/.test(input);
+  return /(^-?\d\.\d\d*$)|(^-?\d$)/.test(input);
 }
 
 function checkIsNegative(input) {

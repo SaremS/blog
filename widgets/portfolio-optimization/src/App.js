@@ -6,7 +6,8 @@ import Grid from "@mui/material/Grid";
 import AddRemoveButtons from "./components/AddRemoveButtons";
 import InstrumentEntryFields from "./components/InstrumentEntryFields";
 import MeanEntryFields from "./components/MeanEntryFields";
-
+import CovEntryFields from "./components/CovEntryFields";
+import OptimizeButton from "./components/OptimizeButton";
 
 import Divider from "@mui/material/Divider";
 
@@ -15,13 +16,23 @@ function App() {
   if ({ nInstrumentsState } < 1) {
     setNInstrumtentsState(1);
   }
-  if ({ nInstrumentsState } > 5) {
-    setNInstrumtentsState(5);
+  if ({ nInstrumentsState } > 4) {
+    setNInstrumtentsState(4);
   }
 
-  const [namesState, setNamesState] = React.useState(["A","B","C","D","E"]);
-  const [meansState, setMeansState] = React.useState(["0.0", "0.0", "0.0", "0.0", "0.0"]);
-
+  const [namesState, setNamesState] = React.useState(["A", "B", "C", "D"]);
+  const [meansState, setMeansState] = React.useState([
+    "0.05",
+    "0.1",
+    "0.15",
+    "0.2",
+  ]);
+  const [covsState, setCovsState] = React.useState([
+    ["0.1", "0.05", "-0.05", "0.0"],
+    ["0.05", "0.2", "0.0", "0.15"],
+    ["-0.05", "0.0", "0.3", "0.0"],
+    ["0.0", "0.15", "0.0", "0.4"],
+  ]);
 
   return (
     <div className="App">
@@ -41,8 +52,10 @@ function App() {
             />
           </Grid>
           <Grid item xs={3} md={1.5}>
-            <div style={{ minHeight: "17.5em" }}>
-              <Divider>Ticker</Divider>
+            <div style={{ minHeight: "16em" }}>
+              <Divider style={{ fontWeight: "bold" }}>Ticker</Divider>
+              <div style={{minHeight:"0.5em"}}></div>
+
               <InstrumentEntryFields
                 state={namesState}
                 setState={setNamesState}
@@ -51,8 +64,9 @@ function App() {
             </div>
           </Grid>
           <Grid item xs={6} md={3}>
-            <div style={{ minHeight: "17.5em" }}>
-              <Divider>Means</Divider>
+            <div style={{ minHeight: "16em" }}>
+              <Divider style={{ fontWeight: "bold" }}>Means</Divider>
+              <div style={{minHeight:"0.5em"}}></div>
               <MeanEntryFields
                 state={meansState}
                 setState={setMeansState}
@@ -62,18 +76,35 @@ function App() {
             </div>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Paper elevation={3}>
-              <div
-                style={{ backgroundColor: "orange", minHeight: "17.5em" }}
-              ></div>
-            </Paper>
+            <div style={{ minHeight: "16em" }}>
+              <Divider style={{ fontWeight: "bold" }}>Covariances</Divider>
+              <div style={{minHeight:"0.5em"}}></div>
+
+              <CovEntryFields
+                state={covsState}
+                setState={setCovsState}
+                nFieldsState={nInstrumentsState}
+                namesState={namesState}
+              />
+            </div>
           </Grid>
           <Grid item xs={12} md={12}>
-            <Paper elevation={3}>
-              <div
-                style={{ backgroundColor: "purple", minHeight: "5em" }}
-              ></div>
-            </Paper>
+              <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                sx={{ minHeight: "5em" }}
+              >
+                <Grid item xs={3}>
+                  <OptimizeButton
+                    meanState={meansState}
+                    covState={covsState}
+                    nFields={nInstrumentsState}
+                  />
+                </Grid>
+              </Grid>
           </Grid>
         </Grid>
       </Box>

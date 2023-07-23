@@ -23,6 +23,9 @@ export default function MeanEntryFields({
 
   return (
     <Grid container spacing={0} alignItems="center" justifyContent="center">
+      <Grid item xs={12} md={12}>
+        <div style={{ textAlign: "center", userSelect: "none", color:"white"}}>A</div>
+      </Grid>
       {fieldList}
     </Grid>
   );

@@ -18,7 +18,7 @@ export default function AddRemoveButtons({ state, setState }) {
           size="small"
           color="grey"
           aria-label="remove"
-          disabled={state == 5}
+          disabled={state == 4}
           onClick={() => {
             setState(state + 1);
           }}
