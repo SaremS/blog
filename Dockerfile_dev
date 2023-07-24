@@ -4,7 +4,8 @@ RUN apk update && apk add bash
 
 COPY ./docs/ /www/data/
 COPY ./widgets/*/dist/ /www/data/widgets/
-COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
-
+COPY ./nginx/nginx_dev.conf /etc/nginx/nginx.conf
+COPY ./wasm_modules/*/pkg/*.js /www/data/wasm_modules/
+COPY ./wasm_modules/*/pkg/*.wasm /www/data/wasm_modules/
 
 EXPOSE 80
