@@ -25,6 +25,18 @@ jobs:
       
     - name: Render
       uses: quarto-dev/quarto-actions/render@v2
+    
+    - name: Build WASM modules
+      uses: actions/checkout@v2
+      run: |
+        cd wasm_modules
+        for d in */ ; do
+          cd $d
+          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          cargo test
+          wasm-pack build --target web
+          cd ..
+        done
       
     - name: Set up Node
       uses: actions/setup-node@v1
