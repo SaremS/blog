@@ -1,8 +1,7 @@
 name: Deploy python stream
 on:
-  push:
-    tags:
-      - "*"
+  release:
+    types: [published]
 
 
 jobs:
