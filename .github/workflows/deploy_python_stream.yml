@@ -1,6 +1,5 @@
 name: Deploy python stream
 on:
-  workflow_dispatch:
   push:
     tags:
       - "*"
