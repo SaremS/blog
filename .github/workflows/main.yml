@@ -1,8 +1,7 @@
 name: Render and deploy
 on:
-  push:
-    tags:
-      - "*"
+  release:
+    types: [published]
 
 jobs:
   quarto-render-and-push:
