@@ -9,13 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.5.0 # Checking out the repo
-    
-    - name: Set up quarto
-      uses: quarto-dev/quarto-actions/setup@v2
-      
-    - name: Render
-      uses: quarto-dev/quarto-actions/render@v2
-    
+        
     - name: Set Up WASM
       uses: actions/checkout@v2
     - name: Build WASM modules
@@ -44,6 +38,12 @@ jobs:
           cd ..
         done
         cd ..
+        
+    - name: Set up quarto
+      uses: quarto-dev/quarto-actions/setup@v2
+      
+    - name: Render
+      uses: quarto-dev/quarto-actions/render@v2
     
     - name: Build and Publish latest Docker image
       uses: VaultVulp/gp-docker-action@1.5.0
