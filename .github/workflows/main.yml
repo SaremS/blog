@@ -2,16 +2,8 @@ name: Render and deploy
 on:
   workflow_dispatch:
   push:
-    branches:
-    - master
-    paths:
-    - 'notebooks/**'
-    - 'notes/**'
-    - 'projects/**'
-    - 'widgets/**'
-    - 'data/**'
-    - '**.qmd'
-    - '.github/workflows/main.yml'
+    tags:
+      - "*"
 
 jobs:
   quarto-render-and-push:
@@ -25,6 +17,18 @@ jobs:
       
     - name: Render
       uses: quarto-dev/quarto-actions/render@v2
+    
+    - name: Build WASM modules
+      uses: actions/checkout@v2
+      run: |
+        cd wasm_modules
+        for d in */ ; do
+          cd $d
+          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          cargo test
+          wasm-pack build --target web
+          cd ..
+        done
       
     - name: Set up Node
       uses: actions/setup-node@v1
@@ -45,24 +49,7 @@ jobs:
       with:
         github-token: ${{ secrets.PUSH_IMAGE_KEY }}     
         image-name: blog
+        extract-git-tag: true
         build-context: .
         dockerfile: ./Dockerfile    
-  deploy:
-      name: Deploy
-      runs-on: ubuntu-latest
-      if: github.ref == 'refs/heads/master'
-      needs: quarto-render-and-push
-      steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USERNAME }}
-          password: ${{ secrets.DEPLOY_PASSWORD }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          script: |
-            cd blog
-            docker stack rm blog
-            docker-compose pull
-            sleep 10
-            docker stack up -c docker-compose.yml blog
+        

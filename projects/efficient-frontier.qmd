@@ -1,0 +1,16 @@
+---
+title: "Client-Side efficient frontier optimization via WebAssembly"
+format: html
+date: "2023-07-24"
+image: "/images/projects/eff_frontier_img.png"
+---
+
+## Dashboard
+
+```{=html}
+<div id="efficient-frontier-widget"></div>
+<script type="module" src="/widgets/efficient-frontier.js"></script>
+```
+**Still fairly experimental - might break occassionally. E.g. no checks for a valid covariance matrix is currently performed**
+## Rough explanation
+Draws the efficient frontier from quadratic optimization for up to four instruments. Everything happens on the client side via WASM-compiled Rust code. The optimizer is [totsu](https://docs.rs/totsu/latest/totsu/) which compiles down to WASM without any issues.
