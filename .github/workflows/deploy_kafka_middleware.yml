@@ -1,8 +1,7 @@
 name: Deploy kafka middleware
 on:
-  push:
-    tags:
-      - "*"
+  release:
+    types: [published]
 
 
 jobs:
