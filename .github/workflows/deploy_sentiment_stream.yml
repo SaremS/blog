@@ -1,9 +1,7 @@
 name: Deploy sentiment stream
 on:
-  workflow_dispatch:
-  push:
-    tags:
-      - "*"
+  release:
+    types: [published]
 
 
 jobs:
