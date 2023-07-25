@@ -1,6 +1,5 @@
 name: Deploy kafka middleware
 on:
-  workflow_dispatch:
   push:
     tags:
       - "*"
