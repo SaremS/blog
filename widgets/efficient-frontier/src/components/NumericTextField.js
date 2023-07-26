@@ -17,7 +17,7 @@ export default function NumericTextField(id, state, changeStateFun) {
       id={id}
       size="small"
       label=""
-      inputProps={{ maxLength: maxLen, style: {textAlign: "center"} }}
+      inputProps={{ maxLength: maxLen, style: {textAlign: "center", fontSize: "0.9em"} }}
       onChange={(e) => changeStateFun(e)}
       defaultValue={state}
       style={{ backgroundColor: bgcolor, maxWidth:"65px" }}

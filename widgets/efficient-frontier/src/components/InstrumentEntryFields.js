@@ -49,7 +49,7 @@ function makeFields(i, name, changeStateFun) {
         defaultValue={name}
         label=""
         style={{ fontSize: "1px" }}
-        inputProps={{ maxLength: 4, style: { textTransform: "uppercase" } }}
+        inputProps={{ maxLength: 4, style: { textTransform: "uppercase", fontSize: "0.9em" } }}
         onChange={(e) => changeStateFun(e)}
       />
     </Grid>
