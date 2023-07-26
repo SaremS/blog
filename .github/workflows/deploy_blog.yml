@@ -1,0 +1,26 @@
+name: Deploy the blog
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag for deployment e.g. `v0.1.5`'
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.DEPLOY_HOST }}
+        username: ${{ secrets.DEPLOY USERNAME }}
+        password: ${{ secrets.DEPLOY_PASSWORD }}
+        port: ${{ secrets.DEPLOY_PORT }}
+        script: |
+          cd blog
+          export BLOG_RELEASE_VERSION=${{ inputs.version }}
+          docker-compose pull
+          docker stack deploy --compose-file docker-compose.yml blog
