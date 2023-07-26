@@ -10,6 +10,8 @@ use num_traits::{Num, Pow};
 
 use serde::{Serialize};
 
+use iter_num_tools::log_space;
+
 extern crate console_error_panic_hook;
 use std::panic;
 
@@ -33,52 +35,59 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn optimize(means: &[f64], covs: &[f64], gamma: f64) -> JsValue {
-    my_init_function();
+pub fn optimize(means: &[f64], covs: &[f64]) -> JsValue {
+    wasm_stderr_hook();
 
-    let q_vec = build_q_vec(means);
-    
-    let (G_mat, h_vec, A_mat, b_vec) = build_remainder_mats(means);
-    
-    let P_mat = build_P_mat(covs, gamma);
+    let mut result_vec:Vec<Portfolio> = Vec::new();
+    let gamma_logspace = log_space(10.0.pow(-1.0)..10.0.pow(4.0), 50);
 
-    let solver = ASolver::new().par(|p| {
-        p.eps_acc = 1e-6;
-        set_par_by_env(p);
-    });
-    let mut quadratic_program = AProbQP::new(
-        P_mat,
-        q_vec.clone(),
-        G_mat.clone(),
-        h_vec.clone(),
-        A_mat.clone(),
-        b_vec.clone(),
-        1e-6);
-    let rslt = solver.solve(quadratic_program.problem());
+    for gamma in gamma_logspace {
 
-    match rslt {
-        Ok(tuple) => {
-            let w = tuple.0;
-            let n = means.len();
-            let (weights, _) = w.split_at(n);
-            let pf_mean = calculate_portfolio_mean(means, weights);
-            let pf_var = calculate_portfolio_variance(covs, weights);
+        let q_vec = build_q_vec(means);
+        
+        let (G_mat, h_vec, A_mat, b_vec) = build_remainder_mats(means);
+        
+        let P_mat = build_P_mat(covs, gamma);
 
-            let portfolio = Portfolio{
-                weights: weights.to_vec(),
-                mean: pf_mean,
-                stddev: pf_var.sqrt()
-            };
-            
-            return serde_wasm_bindgen::to_value(&portfolio).unwrap();
+        let solver = ASolver::new().par(|p| {
+            p.eps_acc = 1e-6;
+            set_par_by_env(p);
+        });
+        let mut quadratic_program = AProbQP::new(
+            P_mat,
+            q_vec.clone(),
+            G_mat.clone(),
+            h_vec.clone(),
+            A_mat.clone(),
+            b_vec.clone(),
+            1e-6);
+        let rslt = solver.solve(quadratic_program.problem());
 
-        },
-        Err(_) => panic!("Error")
+        match rslt {
+            Ok(tuple) => {
+                let w = tuple.0;
+                let n = means.len();
+                let (weights, _) = w.split_at(n);
+                let pf_mean = calculate_portfolio_mean(means, weights);
+                let pf_var = calculate_portfolio_variance(covs, weights);
+
+                let portfolio = Portfolio{
+                    weights: weights.to_vec(),
+                    mean: pf_mean,
+                    stddev: pf_var.sqrt()
+                };
+
+                result_vec.push(portfolio);
+            },
+            Err(_) => panic!("Error")
+        }
     }
+
+    return serde_wasm_bindgen::to_value(&result_vec).unwrap();
 }
 
 
-fn my_init_function() {
+fn wasm_stderr_hook() {
     panic::set_hook(Box::new(console_error_panic_hook::hook));
 }
 

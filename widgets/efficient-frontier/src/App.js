@@ -1,7 +1,8 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import AddRemoveButtons from "./components/AddRemoveButtons";
 import InstrumentEntryFields from "./components/InstrumentEntryFields";
@@ -12,11 +13,10 @@ import RiskReturnPlot from "./components/RiskReturnPlot";
 
 import Divider from "@mui/material/Divider";
 
-
 function App() {
-  const [nInstrumentsState, setNInstrumtentsState] = React.useState(1);
-  if ({ nInstrumentsState } < 1) {
-    setNInstrumtentsState(1);
+  const [nInstrumentsState, setNInstrumtentsState] = React.useState(2);
+  if ({ nInstrumentsState } < 2) {
+    setNInstrumtentsState(2);
   }
   if ({ nInstrumentsState } > 4) {
     setNInstrumtentsState(4);
@@ -38,12 +38,13 @@ function App() {
 
   const [riskReturnState, setRiskReturnState] = React.useState([]);
 
+
   return (
     <div className="App">
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2} alignItems="center" justifyContent="center">
           <Grid item xs={12} md={12}>
-            <div style={{  minHeight: "22.5em" }} id="plot-area">
+            <div style={{ minHeight: "22.5em" }} id="plot-area">
               <RiskReturnPlot data={riskReturnState} />
             </div>
           </Grid>
@@ -114,6 +115,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;
