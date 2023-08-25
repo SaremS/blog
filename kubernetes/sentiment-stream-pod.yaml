@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.network/kafka-backend-network: "true"
+    io.kompose.service: sentiment-stream
+  name: sentiment-stream
+spec:
+  containers:
+    - env:
+        - name: KAFKA_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: KAFKA_HOST
+              name: environment--env-sentiment-stream
+        - name: KAFKA_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              key: KAFKA_TOPIC
+              name: environment--env-sentiment-stream
+      image: ghcr.io/sarems/blog/showcases-sentiment-stream:latest
+      name: sentiment-stream
+      resources: {}
+      volumeMounts:
+        - mountPath: /sentimenter/saved_model
+          name: sentiment-stream-claim0
+  restartPolicy: OnFailure
+  volumes:
+    - name: sentiment-stream-claim0
+      persistentVolumeClaim:
+        claimName: sentiment-stream-claim0
+status: {}

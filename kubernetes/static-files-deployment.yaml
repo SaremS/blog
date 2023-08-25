@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: static-files
+  name: static-files
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: static-files
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/middleware-network: "true"
+        io.kompose.service: static-files
+    spec:
+      containers:
+        - image: ghcr.io/sarems/blog/static_files:latest
+          name: nginx
+          resources: {}
+      restartPolicy: Always
+status: {}
