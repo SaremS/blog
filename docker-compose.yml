@@ -26,6 +26,19 @@ services:
           - node.role==manager
     depends_on:
       - middleware
+      - static_files
+
+
+  static_files:
+    image: 'ghcr.io/sarems/blog/static_files:latest'
+    container_name: nginx
+    restart: unless-stopped
+    networks:
+      - middleware-network
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
   
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1

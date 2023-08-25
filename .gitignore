@@ -54,3 +54,5 @@
 **/saved_model/
 
 **/persist/
+
+/environment/
