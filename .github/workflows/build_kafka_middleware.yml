@@ -1,4 +1,4 @@
-name: Deploy kafka middleware
+name: Build kafka middleware
 on:
   release:
     types: [published]
