@@ -30,7 +30,7 @@ class PrawStreamer():
         self.reddit_client = praw.Reddit(
             client_id=self.reddit_client_id,
             client_secret=self.reddit_client_secret,
-            user_agent="Praw Streamer"
+            user_agent="script:blog:v0.0.1"
         )
 
     def create_topics(self, topic_name: str) -> None:
