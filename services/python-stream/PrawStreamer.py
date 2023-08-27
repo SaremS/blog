@@ -24,6 +24,9 @@ class PrawStreamer():
         self.reddit_client_id = os.getenv("REDDIT_CLIENT_ID")
         self.reddit_client_secret = os.getenv("REDDIT_CLIENT_SECRET")
 
+        print(self.reddit_client_id)
+        print(self.reddit_client_secret)
+
         self.reddit_client = praw.Reddit(
             client_id=self.reddit_client_id,
             client_secret=self.reddit_client_secret,
