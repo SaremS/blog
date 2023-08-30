@@ -1,3 +1,6 @@
+#kubernetes
+**/secrets/
+
 #quarto
 /.quarto/
 /docs/
