@@ -5,6 +5,8 @@ RUN apk update && apk add bash
 COPY ./nginx/envvar_entrypoint.sh /
 COPY ./nginx/nginx.conf.template /etc/nginx/nginx.conf.template
 
+RUN ["chmod", "+x", "/envvar_entrypoint.sh"]
+
 EXPOSE 80
 ENTRYPOINT ["/envvar_entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
