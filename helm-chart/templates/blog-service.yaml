@@ -8,7 +8,6 @@ spec:
   type: LoadBalancer
   ports:
     - name: "80"
-      nodePort: {{ .Values.deployment.port }}
       port: 80
       targetPort: 80
   selector:
