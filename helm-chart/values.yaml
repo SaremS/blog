@@ -4,5 +4,3 @@ kafka:
       protocol: PLAINTEXT
     interbroker:
   protocol: PLAINTEXT
-deployment:
-  port: 30003
