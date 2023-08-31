@@ -21,6 +21,6 @@ jobs:
         port: ${{ secrets.DEPLOY_PORT }}
         script: |
           cd blog
-          export BLOG_RELEASE_VERSION=${{ inputs.version }}
-          docker-compose pull
-          docker stack deploy --compose-file docker-compose.yml blog
+          git pull origin master
+          helm dependency update ./helm-chart
+          helm upgrade blog ./helm-chart --set image.version=${{ inputs.version }} -n blog-prod
