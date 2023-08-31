@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service-name: static-files
+  name: static-files
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service-name: static-files
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service-name: static-files
+    spec:
+      containers:
+        - image: ghcr.io/sarems/blog/static_files:{{ .Values.image.version }}
+          name: static-files
+          resources: {}
+      restartPolicy: Always
+      imagePullSecrets:
+      - name: blogpullsecret
+status: {}

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: helm-chart
+description: Deploy the blog
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+dependencies:
+- name: kafka
+  version: 25.1.1
+  repository: "oci://registry-1.docker.io/bitnamicharts"

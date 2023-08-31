@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service-name: blog
+  name: blog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service-name: blog
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service-name: blog
+    spec:
+      containers:
+        - image: ghcr.io/sarems/blog/blog:{{ .Values.image.version }}
+          name: blog
+          ports:
+            - containerPort: 80
+          resources: {}
+          env:
+          - name: KUBERNETES_NAMESPACE
+            value: {{ .Release.Namespace }}
+      restartPolicy: Always
+      imagePullSecrets:
+      - name: blogpullsecret
+status: {}

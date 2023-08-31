@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service-name: sentiment-stream
+  name: sentiment-stream
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service-name: sentiment-stream
+  template:
+    metadata:
+      labels:
+        service-name: sentiment-stream
+    spec:
+      containers:
+      - env:
+        - name: KAFKA_HOST
+          value: {{ .Release.Name }}-kafka.{{ .Release.Namespace }}.svc.cluster.local:9092
+        - name: KAFKA_TOPIC
+          value: reddit_praw
+        image: ghcr.io/sarems/blog/sentiment-stream:{{ .Values.image.version }}
+        name: sentiment-stream
+        volumeMounts:
+        - mountPath: /sentimenter/saved_model
+          name: sentiment-stream-pvc
+      imagePullSecrets:
+      - name: blogpullsecret
+      restartPolicy: Always
+      volumes:
+      - name: sentiment-stream-pvc
+        persistentVolumeClaim:
+          claimName: sentiment-stream-pvc

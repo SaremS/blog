@@ -1,14 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  creationTimestamp: null
-  labels:
-    io.kompose.service: middleware-claim0
-  name: middleware-claim0
+  name: sentiment-stream-pvc
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: longhorn
   resources:
     requests:
-      storage: 100Mi
+      storage: 5Gi
 status: {}

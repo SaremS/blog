@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service-name: python-stream
+  name: python-stream
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service-name: python-stream
+  template:
+    metadata:
+      labels:
+        service-name: python-stream
+    spec:
+      containers:
+        - image: ghcr.io/sarems/blog/blog-python-stream:{{ .Values.image.version }}
+          name: python-stream
+          env:
+          - name: KAFKA_HOST
+            value: {{ .Release.Name }}-kafka.{{ .Release.Namespace }}.svc.cluster.local:9092
+          - name: REDDIT_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                key: reddit-client-id
+                name: reddit-client-id
+          - name: REDDIT_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                key: reddit-client-secret
+                name: reddit-client-secret
+      imagePullSecrets:
+      - name: blogpullsecret
+      restartPolicy: Always
