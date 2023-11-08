@@ -23,4 +23,4 @@ jobs:
           cd blog
           git pull origin master
           helm dependency update ./helm-chart
-          helm upgrade blog ./helm-chart --set image.version=${{ inputs.version }} -n blog-prod
+          helm upgrade blog ./helm-chart --set image.version=${{ inputs.version }} -n blog-backup4
