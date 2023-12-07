@@ -12,10 +12,8 @@ website:
         file: index.qmd
       - text: "Projects"
         file: projects.qmd
-      - text: "More"
-        menu:
-          - notebooks.qmd
-          - notes.qmd
+      - text: "Notebooks"
+        file: notebooks.qmd
       - about.qmd
       - icon: github
         href: https://github.com/SaremS

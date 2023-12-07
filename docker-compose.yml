@@ -78,6 +78,7 @@ services:
         constraints:  
           - node.role==worker
 
+
   python-stream:
     image: 'ghcr.io/sarems/blog/python-stream:latest'
     container_name: python-stream
@@ -93,6 +94,7 @@ services:
         constraints:  
           - node.role==worker
   
+
   sentiment-stream:
     image: 'ghcr.io/sarems/blog/showcases-sentiment-stream:latest'
     container_name: sentiment-stream
