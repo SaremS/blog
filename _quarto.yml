@@ -1,0 +1,26 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Sarem Seitz"
+  site-url: 'https://www.sarem-seitz.com'
+  favicon: /images/static/logo.png
+  navbar:
+    right:
+      - text: "Home"
+        file: index.qmd
+      - about.qmd
+      - icon: github
+        href: https://github.com/SaremS
+      - icon: twitter
+        href: https://twitter.com/sarem_seitz
+      - icon: rss
+        href: index.xml
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+
+
+
