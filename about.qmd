@@ -14,7 +14,7 @@ about:
       href: https://github.com/SaremS
 
 ---
-Personal blog - I mainly do Time-Series Analysis, (Bayesian) Machine Learning, MLOps and Data Engineering. 
+Personal blog - I mainly do Time-Series Analysis, (Bayesian) Machine Learning, Data Engineering and MLOps. 
 
 Feel free to contact me - Email below.
 
