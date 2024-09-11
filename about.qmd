@@ -15,6 +15,7 @@ about:
 
 ---
 Personal blog - I mainly do Time-Series Analysis, (Bayesian) Machine Learning, Data Engineering and MLOps. 
+
 Feel free to contact me - Email below.
 
 ### Imprint/legal information
