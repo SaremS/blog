@@ -16,6 +16,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Create notebooks.qmd
+        run: |
+          cat <<EOF > notebooks.qmd
+          ---
+          title: "Notebooks"
+          listing:
+            contents: notebooks
+            sort: "title asc"
+            type: table
+            categories: false
+            sort-ui: false
+            filter-ui: false
+            fields: [title]
+          page-layout: full
+          title-block-banner: true
+          ---
+          Collection of short notebooks that don't qualify as full-length articles.
+          EOF
+
+      - name: Checkout notebooks
+        run: |
+          git clone https://github.com/SaremS/sample_notebooks
+          cp -r sample_notebooks notebooks
+          rm -r sample_notebooks
+
       - name: Install Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
