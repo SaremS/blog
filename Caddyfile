@@ -1,6 +1,9 @@
-:8080 {
+www.sarem-seitz.com {
+    	redir https://sarem-seitz.com{uri} permanent
+}
+
+sarem-seitz.com {
   root * /usr/share/caddy
-  encode zstd gzip
   file_server
 
   redir /posts/varying-coefficient-boosting-for-geospatial-and-temporal-data/ /posts/varying-coefficient-boosting-for-geospatial-and-temporal-data.html permanent
